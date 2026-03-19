@@ -8,26 +8,26 @@ interface Props {
 export default function ComparisonSlider({ quality }: Props) {
   const [loaded, setLoaded] = useState(false)
   const [compressedSrc, setCompressedSrc] = useState<string | null>(null)
-  const [encodeKey, setEncodeKey] = useState(0)
+  const [encoding, setEncoding] = useState(false)
   const [position, setPosition] = useState(50)
   const containerRef = useRef<HTMLDivElement>(null)
   const sourceBufferRef = useRef<ArrayBuffer | null>(null)
   const dragging = useRef(false)
 
   async function encode(buffer: ArrayBuffer, q: number) {
+    setEncoding(true)
     try {
-      console.log('[encode] calling convert with quality:', q, 'bufferSize:', buffer.byteLength)
       const result = await window.electron.convert(buffer, 'jpeg', q)
-      console.log('[encode] result size:', result.byteLength)
       const blob = new Blob([result.buffer as ArrayBuffer], { type: 'image/jpeg' })
       const url = URL.createObjectURL(blob)
       setCompressedSrc(prev => {
         if (prev) URL.revokeObjectURL(prev)
         return url
       })
-      setEncodeKey(k => k + 1)
     } catch (e) {
       console.error('[ComparisonSlider] encode failed:', e)
+    } finally {
+      setEncoding(false)
     }
   }
 
@@ -84,17 +84,22 @@ export default function ComparisonSlider({ quality }: Props) {
       style={{ aspectRatio: '16/7' }}
       onMouseDown={onMouseDown}
     >
-      {!loaded && (
-        <div className="absolute inset-0 bg-accent animate-pulse rounded-xl" />
-      )}
-
-      {compressedSrc && (
+      {/* Compressed (right side) — blurred while encoding, blurred original as placeholder before first encode */}
+      {compressedSrc ? (
         <img
-          key={encodeKey}
           src={compressedSrc}
           alt="compressed"
           draggable={false}
+          className="absolute inset-0 w-full h-full object-cover transition-[filter] duration-300"
+          style={{ filter: encoding ? 'blur(6px)' : 'none' }}
+        />
+      ) : (
+        <img
+          src={presentationImg}
+          alt="placeholder"
+          draggable={false}
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: 'blur(12px)', transform: 'scale(1.05)' }}
         />
       )}
 
@@ -104,7 +109,7 @@ export default function ComparisonSlider({ quality }: Props) {
           alt="original"
           draggable={false}
           onLoad={onImgLoad}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
           style={{ opacity: loaded ? 1 : 0 }}
         />
       </div>
