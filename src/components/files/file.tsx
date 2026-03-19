@@ -37,15 +37,17 @@ export default function File({ data }: { data: File }) {
             <Badge variant={'secondary'} className="shrink-0 uppercase h-10 w-10 rounded-sm mr-2" style={colorStyle}>
                 {ext}
             </Badge>
-            <div className="flex flex-col">
-                <h3 className="text-sm font-normal text-accent-foreground font-body">{data.name}</h3>
+            <div className="flex flex-col min-w-0 w-100 shrink-0">
+                <h3 className="text-sm font-normal text-accent-foreground font-body truncate">{data.name}</h3>
                 {failedError
                     ? <p className="text-xs font-normal text-destructive">{failedError}</p>
                     : <p className="text-xs font-normal text-accent-foreground/50">{formatBytes(data.size)}</p>
                 }
             </div>
-            <MoveRight size={24} className="stroke-accent ml-auto -mr-20" />
-            <div className="ml-auto">
+            <div className="flex-1 flex justify-center">
+                <MoveRight size={24} className="stroke-accent" />
+            </div>
+            <div>
                 <div className="flex items-center gap-2">
                     <Combobox value={targetFormat} onValueChange={(v) => setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
                         <ComboboxInput className={'w-24! h-10! [&_input]:uppercase! [&_input]:select-none!'} readOnly />

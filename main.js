@@ -6,8 +6,8 @@ const isDev = !app.isPackaged
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+    width: 1280,
+    height: 800,
     icon: path.join(__dirname, 'build-assets/icon.icns'),
     webPreferences: {
       nodeIntegration: false,

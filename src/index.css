@@ -185,6 +185,6 @@
   }
 
   .section {
-    @apply max-w-4xl px-10 mx-auto;
+    @apply max-w-5xl px-10 mx-auto;
   }
 }
