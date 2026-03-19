@@ -1,4 +1,5 @@
-import { useAppStore, allFormats } from '@/store/useAppStore'
+import { useConvertStore } from '@/store/useConvertStore'
+import { allImageFormats } from '@/engines/engineRegistry'
 import {
     Combobox,
     ComboboxInput,
@@ -8,8 +9,8 @@ import {
 } from '@/components/ui/combobox'
 
 export default function DefaultFormat() {
-    const defaultOutputFormat = useAppStore(s => s.defaultOutputFormat)
-    const setDefaultOutputFormat = useAppStore(s => s.setDefaultOutputFormat)
+    const defaultOutputFormat = useConvertStore(s => s.defaultOutputFormat)
+    const setDefaultOutputFormat = useConvertStore(s => s.setDefaultOutputFormat)
 
     return (
         <div className="p-5 rounded-2xl border border-accent bg-secondary/30 space-y-4">
@@ -24,7 +25,7 @@ export default function DefaultFormat() {
                 <ComboboxInput placeholder="Select format" className="w-40! h-10! [&_input]:uppercase! [&_input]:select-none! m-0!" />
                 <ComboboxContent>
                     <ComboboxList>
-                        {allFormats.map(fmt => (
+                        {allImageFormats.map(fmt => (
                             <ComboboxItem key={fmt} value={fmt}>
                                 {fmt.toUpperCase()}
                             </ComboboxItem>

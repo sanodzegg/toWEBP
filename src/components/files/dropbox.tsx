@@ -1,7 +1,7 @@
 import { Import } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRef } from "react";
-import { useAppStore } from "@/store/useAppStore";
+import { useConvertStore } from "@/store/useConvertStore";
 import { Badge } from "../ui/badge";
 
 export default function Dropbox() {
@@ -15,7 +15,7 @@ export default function Dropbox() {
     const handleDragEnd = () => wrapperRef.current && wrapperRef.current.classList.remove('dragenter');
     const preventDragOver = (e: React.DragEvent) => e.preventDefault();
 
-    const { receiveFiles } = useAppStore();
+    const { receiveFiles } = useConvertStore();
     const handleFiles = (files: FileList | null) => receiveFiles(Array.from(files ?? []));
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
