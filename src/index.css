@@ -39,12 +39,23 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  --badge-jpg-bg: #ffeef2; --badge-jpg-border: #fbc8d4; --badge-jpg-text: #c0184c;
-  --badge-png-bg: #e8f3ff; --badge-png-border: #b8d8ff; --badge-png-text: #1a5fb8;
+  /* image */
+  --badge-jpg-bg: #ffeef2;  --badge-jpg-border: #fbc8d4;  --badge-jpg-text: #c0184c;
+  --badge-png-bg: #e8f3ff;  --badge-png-border: #b8d8ff;  --badge-png-text: #1a5fb8;
   --badge-webp-bg: #e8fff5; --badge-webp-border: #b8f0d8; --badge-webp-text: #0e7a4a;
   --badge-avif-bg: #f3eeff; --badge-avif-border: #d4c0ff; --badge-avif-text: #6020c0;
-  --badge-gif-bg:  #fffbe8; --badge-gif-border:  #ffe890; --badge-gif-text:  #8a6000;
+  --badge-gif-bg: #fffbe8;  --badge-gif-border: #ffe890;  --badge-gif-text: #8a6000;
   --badge-tiff-bg: #e8f8f8; --badge-tiff-border: #a0dada; --badge-tiff-text: #0a5858;
+  /* video */
+  --badge-mp4-bg: #fff0e8;  --badge-mp4-border: #ffcba0;  --badge-mp4-text: #c04a00;
+  --badge-mov-bg: #fdf0ff;  --badge-mov-border: #e8b8ff;  --badge-mov-text: #8a00c0;
+  --badge-avi-bg: #f0f8e8;  --badge-avi-border: #c8e8a0;  --badge-avi-text: #3a7000;
+  --badge-mkv-bg: #e8f0ff;  --badge-mkv-border: #a0c0f8;  --badge-mkv-text: #003ab8;
+  --badge-webm-bg: #e8fff0; --badge-webm-border: #a0f0c0; --badge-webm-text: #006838;
+  /* document */
+  --badge-pdf-bg: #fff3e8;  --badge-pdf-border: #ffc8a0;  --badge-pdf-text: #c03000;
+  --badge-docx-bg: #e8f0ff; --badge-docx-border: #a0c0ff; --badge-docx-text: #0038c0;
+  --badge-txt-bg: #f5f5f5;  --badge-txt-border: #d0d0d0;  --badge-txt-text: #404040;
 }
 
 .dark {
@@ -80,12 +91,23 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.78 0.14 300);
 
-  --badge-jpg-bg: #2a1420; --badge-jpg-border: #5a2030; --badge-jpg-text: #ff8fa3;
-  --badge-png-bg: #0e1e30; --badge-png-border: #1a3a5a; --badge-png-text: #80c8ff;
+  /* image */
+  --badge-jpg-bg: #2a1420;  --badge-jpg-border: #5a2030;  --badge-jpg-text: #ff8fa3;
+  --badge-png-bg: #0e1e30;  --badge-png-border: #1a3a5a;  --badge-png-text: #80c8ff;
   --badge-webp-bg: #0e2a1e; --badge-webp-border: #1a5a3a; --badge-webp-text: #80ffcc;
   --badge-avif-bg: #1e1430; --badge-avif-border: #3a2060; --badge-avif-text: #c0a0ff;
-  --badge-gif-bg: #2a2000; --badge-gif-border: #5a4400; --badge-gif-text: #ffd966;
+  --badge-gif-bg: #2a2000;  --badge-gif-border: #5a4400;  --badge-gif-text: #ffd966;
   --badge-tiff-bg: #1a2020; --badge-tiff-border: #2a4040; --badge-tiff-text: #80d4d4;
+  /* video */
+  --badge-mp4-bg: #2a1800;  --badge-mp4-border: #5a3000;  --badge-mp4-text: #ffaa60;
+  --badge-mov-bg: #220030;  --badge-mov-border: #440060;  --badge-mov-text: #e080ff;
+  --badge-avi-bg: #142000;  --badge-avi-border: #2a4400;  --badge-avi-text: #a0e040;
+  --badge-mkv-bg: #001030;  --badge-mkv-border: #002060;  --badge-mkv-text: #60a8ff;
+  --badge-webm-bg: #003018; --badge-webm-border: #006030; --badge-webm-text: #40e890;
+  /* document */
+  --badge-pdf-bg: #2a1000;  --badge-pdf-border: #5a2000;  --badge-pdf-text: #ff8060;
+  --badge-docx-bg: #001030; --badge-docx-border: #002060; --badge-docx-text: #60a0ff;
+  --badge-txt-bg: #1e1e1e;  --badge-txt-border: #3a3a3a;  --badge-txt-text: #c0c0c0;
 }
 
 @theme inline {

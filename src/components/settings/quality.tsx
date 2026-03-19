@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useAppStore } from '@/store/useAppStore'
+import { useConvertStore } from '@/store/useConvertStore'
 import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 
 export default function QualityPicker() {
-    const quality = useAppStore(s => s.quality)
-    const setQuality = useAppStore(s => s.setQuality)
+    const quality = useConvertStore(s => s.quality)
+    const setQuality = useConvertStore(s => s.setQuality)
     const [local, setLocal] = useState(quality)
 
     return (
