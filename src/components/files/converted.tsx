@@ -3,8 +3,9 @@ import { useEffect, useState } from "react"
 import type { ConvertedFile } from "@/types"
 import { formatBytes } from "@/utils/fileUtils"
 import { Button } from "../ui/button"
-import { RefreshCcw } from "lucide-react"
+import { Download, RefreshCcw } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import JSZip from "jszip"
 
 export default function ConvertedFiles() {
     const convertedFiles = useConvertStore(s => s.convertedFiles)
@@ -41,23 +42,42 @@ export default function ConvertedFiles() {
         URL.revokeObjectURL(url)
     }
 
+    const downloadAll = async () => {
+        if (snapshot.length === 0) return
+        if (snapshot.length === 1) {
+            handleDownload(snapshot[0].blob, snapshot[0].name)
+            return
+        }
+        const zip = new JSZip()
+        for (const f of snapshot) {
+            zip.file(f.name, f.blob)
+        }
+        const blob = await zip.generateAsync({ type: 'blob' })
+        handleDownload(blob, 'converted.zip')
+    }
+
     return (
         <section className="py-6">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-medium text-primary font-body text-base">
                     Converted ({snapshot.length}){failedEntries.length > 0 && <span className="text-destructive ml-2">· {failedEntries.length} failed</span>}
                 </h3>
-                <Tooltip>
-                    <TooltipTrigger>
-                        <Button onClick={resetAppState} variant={'secondary'} className={'group p-2.5! h-full!'}>
-                            <RefreshCcw className="size-5 group-hover:animate-spin-once" />
-                        </Button>
-                        <TooltipContent>
-                            <p className="text-sm font-light text-accent">Refresh Converting</p>
-                        </TooltipContent>
-                    </TooltipTrigger>
+                <div className="flex items-center gap-x-2">
+                    <Button onClick={downloadAll} disabled={!isDone} variant={'secondary'} className={'group p-2.5! h-full!'}>
+                        <Download className="size-5" />
+                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <Button onClick={resetAppState} variant={'secondary'} className={'group p-2.5! h-full!'}>
+                                <RefreshCcw className="size-5 group-hover:animate-spin-once" />
+                            </Button>
+                            <TooltipContent>
+                                <p className="text-sm font-light text-accent">Refresh Converting</p>
+                            </TooltipContent>
+                        </TooltipTrigger>
 
-                </Tooltip>
+                    </Tooltip>
+                </div>
             </div>
             {snapshot.length > 0 && (
                 <ul className="space-y-2.5">
