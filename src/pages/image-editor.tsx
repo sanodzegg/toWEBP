@@ -9,7 +9,7 @@ export default function ImageEditor() {
         <section className="section py-8">
             <div className="mb-6">
                 <h2 className="text-2xl font-body font-semibold text-foreground">Image Editor</h2>
-                <p className="text-sm text-muted-foreground mt-1">Crop your image and export it.</p>
+                <p className="text-sm text-muted-foreground mt-1">Crop, adjust, annotate, and export your image.</p>
             </div>
 
             {file

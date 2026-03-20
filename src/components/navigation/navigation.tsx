@@ -22,8 +22,8 @@ export default function Navigation() {
         <section className="border-b border-b-gray-200 dark:border-b-gray-50/10">
             <div className="flex items-center justify-between py-2.5 max-w-5xl mx-auto px-10">
                 <div className="flex items-center justify-center gap-x-2 shrink-0">
-                    <img src={LogoLight} alt="toWEBP logo" className="h-13 w-13 dark:hidden" />
-                    <img src={LogoDark} alt="toWEBP logo" className="h-13 w-13 hidden dark:block" />
+                    <img src={LogoLight} alt="FileConvert logo" className="h-13 w-13 dark:hidden" />
+                    <img src={LogoDark} alt="FileConvert logo" className="h-13 w-13 hidden dark:block" />
                     <h1 className="text-2xl text-black dark:text-white">FileConvert</h1>
                 </div>
 

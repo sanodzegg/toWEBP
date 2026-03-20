@@ -1,6 +1,6 @@
 {
-  "name": "toWEBP",
-  "version": "1.1.0",
+  "name": "file-convert",
+  "version": "1.2.0",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -18,8 +18,8 @@
   "author": "",
   "license": "ISC",
   "build": {
-    "appId": "com.sanodzegg.towebp",
-    "productName": "toWEBP",
+    "appId": "com.sanodzegg.fileconvert",
+    "productName": "FileConvert",
     "mac": {
       "icon": "build-assets/icon.icns",
       "category": "public.app-category.graphics-design",
