@@ -1,9 +1,10 @@
-import { Camera, RotateCcw, Loader2, Globe, Download, AlertCircle } from 'lucide-react'
+import { Camera, RotateCcw, Loader2, Globe, Download, AlertCircle, WifiOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useScreenshot } from '@/components/website-screenshot/use-screenshot'
+import { useState, useEffect } from 'react'
 
 const FORMATS = ['png', 'jpg', 'webp'] as const
 const VIEWPORT_PRESETS = [
@@ -15,11 +16,41 @@ const VIEWPORT_PRESETS = [
 
 export default function WebsiteScreenshot() {
   const { state, capture, save, setUrl, blurUrl, setFormat, setViewportWidth, reset } = useScreenshot()
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
+
+  useEffect(() => {
+    const onOnline = () => setIsOnline(true)
+    const onOffline = () => setIsOnline(false)
+    window.addEventListener('online', onOnline)
+    window.addEventListener('offline', onOffline)
+    return () => {
+      window.removeEventListener('online', onOnline)
+      window.removeEventListener('offline', onOffline)
+    }
+  }, [])
 
   const isCapturing = state.captureStatus === 'capturing'
   const isDone = state.captureStatus === 'done'
   const isError = state.captureStatus === 'error' || state.captureStatus === 'timeout'
   const browserReady = state.browserStatus === 'ready'
+
+  if (!isOnline) {
+    return (
+      <section className="section py-8">
+        <div className="mb-6">
+          <h2 className="text-2xl font-body font-semibold text-foreground">Website Screenshot</h2>
+          <p className="text-sm text-muted-foreground mt-1">Capture full-page screenshots of any public URL.</p>
+        </div>
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-8 flex flex-col items-center justify-center gap-3 text-center h-64">
+          <WifiOff className="size-8 text-destructive" />
+          <div>
+            <p className="text-sm font-medium text-destructive">No internet connection</p>
+            <p className="text-xs text-muted-foreground mt-1">Website screenshots require an active internet connection.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="section py-8">
