@@ -187,4 +187,8 @@
   .section {
     @apply max-w-5xl px-10 mx-auto;
   }
+
+  button {
+    @apply cursor-pointer!;
+  }
 }

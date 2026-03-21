@@ -31,6 +31,11 @@ declare interface Window {
     onBulkProgress: (cb: (data: { done: number; total: number; latest: BulkFileResult }) => void) => () => void
     onBulkWatchConverted: (cb: (data: BulkFileResult) => void) => () => void
 
+    // PDF tools
+    pdfMerge: (opts: { buffers: number[][] }) => Promise<{ buffer: number[] }>
+    pdfMergeSave: (opts: { buffer: number[] }) => Promise<{ canceled: boolean; filePath?: string }>
+    pdfPickFiles: () => Promise<{ canceled: boolean; files: { path: string; name: string; size: number; buffer: number[] }[] }>
+
     // Website screenshot
     screenshotEnsureBrowser: () => Promise<boolean>
     screenshotCapture: (opts: { url: string; format: 'png' | 'jpg' | 'webp'; viewportWidth: number }) => Promise<{ preview: string; buffer: number[]; format: string }>

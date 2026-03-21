@@ -5,6 +5,7 @@ import FaviconConversion from "./pages/favicons";
 import ImageEditor from "./pages/image-editor";
 import BulkConverter from "./pages/bulk-converter";
 import WebsiteScreenshot from "./pages/website-screenshot";
+import PdfMerge from "./pages/pdf-merge";
 
 export default function Router() {
   return (
@@ -15,6 +16,7 @@ export default function Router() {
         <Route path="/extensions/image-editor" element={<ImageEditor />} />
         <Route path="/extensions/bulk-converter" element={<BulkConverter />} />
         <Route path="/extensions/website-screenshot" element={<WebsiteScreenshot />} />
+        <Route path="/extensions/pdf-merge" element={<PdfMerge />} />
     </Routes>
   )
 }

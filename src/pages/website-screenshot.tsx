@@ -117,7 +117,7 @@ export default function WebsiteScreenshot() {
                   onClick={() => setFormat(f)}
                   disabled={isCapturing}
                   className={cn(
-                    'flex-1 rounded-lg border py-1.5 text-xs font-medium uppercase transition-colors',
+                    'cursor-pointer flex-1 rounded-lg border py-1.5 text-xs font-medium uppercase transition-colors',
                     state.format === f
                       ? 'border-primary bg-primary/10 text-primary'
                       : 'border-border text-muted-foreground hover:border-primary/50'
@@ -139,7 +139,7 @@ export default function WebsiteScreenshot() {
                   onClick={() => setViewportWidth(p.value)}
                   disabled={isCapturing}
                   className={cn(
-                    'rounded-lg border py-1.5 text-xs transition-colors',
+                    'cursor-pointer rounded-lg border py-1.5 text-xs transition-colors',
                     state.viewportWidth === p.value
                       ? 'border-primary bg-primary/10 text-primary'
                       : 'border-border text-muted-foreground hover:border-primary/50'
@@ -221,7 +221,7 @@ export default function WebsiteScreenshot() {
             </div>
           ) : isCapturing ? (
             <div className="rounded-xl border border-dashed border-border p-6 flex flex-col items-center justify-center gap-3 text-center h-64">
-              <Loader2 className="size-8 text-muted-foreground/40 animate-spin" />
+              <Loader2 className="size-8 text-muted-foreground animate-spin" />
               <div>
                 <p className="text-sm text-muted-foreground">Capturing full page…</p>
                 <p className="text-[10px] text-muted-foreground/60 mt-1">Loading page content</p>
@@ -229,7 +229,7 @@ export default function WebsiteScreenshot() {
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-border p-6 flex flex-col items-center justify-center gap-3 text-center h-64">
-              <Globe className="size-8 text-muted-foreground/40" />
+              <Globe className="size-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
                 {!browserReady ? 'Waiting for browser engine…' : 'Enter a URL and click Capture'}
               </p>

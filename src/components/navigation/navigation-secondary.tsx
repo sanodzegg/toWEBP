@@ -10,7 +10,7 @@ import {
     SheetTrigger,
 } from "../ui/sheet";
 import { cn } from "@/lib/utils";
-import { Camera, ChevronRight, FileDown, FolderSync, Globe, ImageIcon, LayoutGrid, WifiOff } from "lucide-react";
+import { Camera, ChevronRight, FileDown, FilePlus, FolderSync, Globe, ImageIcon, LayoutGrid, WifiOff } from "lucide-react";
 
 type SimpleExtension = { kind: 'link'; title: string; description: string; href: string; icon: React.ReactNode }
 type GroupExtension = { kind: 'group'; title: string; icon: React.ReactNode; children: { title: string; description: string; href: string; icon: React.ReactNode; disabled?: boolean; requiresInternet?: boolean }[] }
@@ -40,6 +40,19 @@ const extensions: Extension[] = [
     },
     {
         kind: 'group',
+        title: 'PDF',
+        icon: <FileDown className="size-5" />,
+        children: [
+            {
+                title: 'Merge',
+                description: 'Combine multiple PDFs into one',
+                href: '/extensions/pdf-merge',
+                icon: <FilePlus className="size-5" />,
+            },
+        ],
+    },
+    {
+        kind: 'group',
         title: 'Web',
         icon: <Globe className="size-5" />,
         children: [
@@ -66,7 +79,8 @@ export function NavigationSecondary() {
     const isExtensionActive = pathname.startsWith('/extensions')
     const [open, setOpen] = useState(false)
     const [expandedGroup, setExpandedGroup] = useState<string | null>(
-        pathname.startsWith('/extensions/website') ? 'Web' : null
+        pathname.startsWith('/extensions/website') ? 'Web' :
+        pathname.startsWith('/extensions/pdf') ? 'PDF' : null
     )
     const [isOnline, setIsOnline] = useState(navigator.onLine)
 

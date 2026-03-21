@@ -139,7 +139,7 @@ export default function BulkConverter() {
             </div>
           ) : !state.folderPath ? (
             <div className="flex flex-col items-center justify-center h-64 rounded-xl border border-dashed border-border text-center gap-2">
-              <FolderOpen className="size-8 text-muted-foreground/40" />
+              <FolderOpen className="size-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">Pick a folder to get started</p>
             </div>
           ) : state.scannedCount === 0 && state.status !== 'scanning' ? (
