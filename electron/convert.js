@@ -91,9 +91,18 @@ function encodeIco(pngBuffers) {
   return Buffer.concat([header, ...dirEntries, ...pngBuffers])
 }
 
+// Normalize input/output format aliases to what sharp actually accepts
+function normalizeFormat(fmt) {
+  if (fmt === 'jfif') return 'jpeg'
+  if (fmt === 'tif') return 'tiff'
+  if (fmt === 'heic' || fmt === 'heif') return 'heif'
+  return fmt
+}
+
 function registerConvertHandlers() {
   ipcMain.handle('convert-file', async (_event, buffer, targetFormat, quality = 60, imageOptions = {}) => {
     const { width, height, fit, keepMetadata = true } = imageOptions
+    const sharpFormat = normalizeFormat(targetFormat)
     const buf = Buffer.from(buffer)
     // SVG needs density (DPI) set at read time for proper rasterization
     const isSvg = buf.subarray(0, 100).toString().includes('<svg')
@@ -110,7 +119,7 @@ function registerConvertHandlers() {
       })
     }
 
-    const result = await pipeline.toFormat(targetFormat, { quality }).toBuffer()
+    const result = await pipeline.toFormat(sharpFormat, { quality }).toBuffer()
     return result
   })
 
