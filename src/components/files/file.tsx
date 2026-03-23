@@ -6,12 +6,14 @@ import {
     ComboboxItem,
     ComboboxList,
 } from "@/components/ui/combobox"
-import { MoveRight, X } from "lucide-react"
+import { ArrowRightIcon, MoveRight, X } from "lucide-react"
 import { useConvertStore } from "@/store/useConvertStore"
 import { fileKey, getExtension, formatBytes } from "@/utils/fileUtils"
 import { getFormatsForFile } from "@/engines/engineRegistry"
 import { Button } from "../ui/button"
 import FileSettingsDialog from "./file-settings-dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { convertSingle } from "@/services/conversionService"
 
 export default function File({ data }: { data: File }) {
     const ext = getExtension(data)
@@ -29,6 +31,11 @@ export default function File({ data }: { data: File }) {
     const isDone = useConvertStore(s => !!s.convertedFiles[fileKey(data)])
     const failedError = useConvertStore(s => s.failedFiles[fileKey(data)] ?? null)
     const removeFile = useConvertStore(s => s.removeFile)
+    const { quality, fileSettings, convertedFiles, startConversion, setConvertedFile, setFailedFile, setCurrentFileName } = useConvertStore()
+
+    const handleConvertSingle = () => convertSingle(data, {
+        quality, fileSettings, convertedFiles, startConversion, setConvertedFile, setFailedFile, setCurrentFileName, removeFile,
+    })
 
     if (isDone) return null;
 
@@ -47,27 +54,42 @@ export default function File({ data }: { data: File }) {
             <div className="flex-1 flex justify-center">
                 <MoveRight size={24} className="stroke-accent" />
             </div>
-            <div>
-                <div className="flex items-center gap-2">
-                    <Combobox value={targetFormat} onValueChange={(v) => setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
-                        <ComboboxInput className={'w-24! h-10! [&_input]:uppercase! [&_input]:select-none!'} readOnly />
-                        <ComboboxContent>
-                            <ComboboxList>
-                                {(item) => (
-                                    <ComboboxItem className={'uppercase'} key={item} value={item}>
-                                        {item}
-                                    </ComboboxItem>
-                                )}
-                            </ComboboxList>
-                        </ComboboxContent>
-                    </Combobox>
-                    <FileSettingsDialog file={data} />
-                    {failedError && (
-                        <Button variant="destructive" size="icon" onClick={() => removeFile(data)}>
-                            <X className="size-4" />
+            <div className="flex items-center gap-2">
+                <Combobox value={targetFormat} onValueChange={(v) => setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
+                    <ComboboxInput className={'w-24! h-10! [&_input]:uppercase! [&_input]:select-none!'} readOnly />
+                    <ComboboxContent>
+                        <ComboboxList>
+                            {(item) => (
+                                <ComboboxItem className={'uppercase'} key={item} value={item}>
+                                    {item}
+                                </ComboboxItem>
+                            )}
+                        </ComboboxList>
+                    </ComboboxContent>
+                </Combobox>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <FileSettingsDialog file={data} />
+                        <TooltipContent>
+                            <p className="text-sm font-light text-accent">File Settings</p>
+                        </TooltipContent>
+                    </TooltipTrigger>
+                </Tooltip>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <Button variant={'secondary'} className={'group p-2.5! h-full!'} onClick={handleConvertSingle}>
+                            <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5 size-5" />
                         </Button>
-                    )}
-                </div>
+                        <TooltipContent>
+                            <p className="text-sm font-light text-accent">Convert Single</p>
+                        </TooltipContent>
+                    </TooltipTrigger>
+                </Tooltip>
+                {failedError && (
+                    <Button variant="destructive" size="icon" onClick={() => removeFile(data)}>
+                        <X className="size-4" />
+                    </Button>
+                )}
             </div>
         </div>
     )

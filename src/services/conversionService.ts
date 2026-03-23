@@ -14,6 +14,10 @@ type ConversionDeps = Pick<
   | 'removeFile'
 >
 
+export async function convertSingle(file: File, deps: ConversionDeps): Promise<void> {
+  await convertAll([file], deps)
+}
+
 export async function convertAll(files: File[], deps: ConversionDeps): Promise<void> {
   const pending = files.filter((f) => !deps.convertedFiles[fileKey(f)])
   if (pending.length === 0) return

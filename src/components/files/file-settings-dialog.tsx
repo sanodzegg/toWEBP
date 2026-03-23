@@ -62,7 +62,7 @@ export default function FileSettingsDialog({ file }: { file: File }) {
     if (!hasSettings) {
         return (
             <Button variant="secondary" className="group p-2.5! h-full!" disabled>
-                <Settings className="size-5" />
+                <Settings className="group-hover:animate-spin-once size-5" />
             </Button>
         )
     }
@@ -72,7 +72,7 @@ export default function FileSettingsDialog({ file }: { file: File }) {
             <DialogTrigger
                 render={
                     <Button variant="secondary" className="group p-2.5! h-full!">
-                        <Settings className={`size-5 ${isCustomized ? 'text-yellow-500' : ''}`} />
+                        <Settings className={`group-hover:animate-spin-once size-5 ${isCustomized ? 'text-yellow-500' : ''}`} />
                     </Button>
                 }
             />
@@ -111,7 +111,7 @@ export default function FileSettingsDialog({ file }: { file: File }) {
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className={`space-y-2 ${!width && !height ? 'opacity-40 pointer-events-none' : ''}`}>
                                 <p className="text-sm font-medium text-primary">Fit</p>
                                 <div className="flex gap-2">
                                     {FIT_OPTIONS.map(opt => (
