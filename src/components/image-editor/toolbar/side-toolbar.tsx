@@ -28,27 +28,27 @@ interface Props {
   drawTool: DrawTool
   drawColor: string
   drawWidth: number
-  canUndo: boolean
   onTransform: (t: Transform) => void
   onResize: (r: ResizeState) => void
   onMode: (m: OverlayMode) => void
   onAdjustments: (a: Adjustments) => void
+  onAdjustmentsLive: (a: Adjustments) => void
+  onHistoryPush: () => void
   onSelectText: (id: string | null) => void
   onUpdateText: (id: string, patch: Partial<TextOverlay>) => void
   onDeleteText: (id: string) => void
   onDrawTool: (t: DrawTool) => void
   onDrawColor: (c: string) => void
   onDrawWidth: (w: number) => void
-  onDrawUndo: () => void
 }
 
 export function SideToolbar({
   adjustments, transform, resize, naturalW, naturalH,
   mode, textOverlays, selectedTextId,
-  drawTool, drawColor, drawWidth, canUndo,
-  onTransform, onResize, onMode, onAdjustments,
+  drawTool, drawColor, drawWidth,
+  onTransform, onResize, onMode, onAdjustments, onAdjustmentsLive, onHistoryPush,
   onSelectText, onUpdateText, onDeleteText,
-  onDrawTool, onDrawColor, onDrawWidth, onDrawUndo,
+  onDrawTool, onDrawColor, onDrawWidth,
 }: Props) {
   const [activeTab, setActiveTab] = useState<SideTab>('canvas')
 
@@ -80,7 +80,9 @@ export function SideToolbar({
             transform={transform}
             vignette={adjustments.vignette}
             onTransform={onTransform}
-            onVignette={v => onAdjustments({ ...adjustments, vignette: v })}
+            onVignette={v => onAdjustmentsLive({ ...adjustments, vignette: v })}
+            onVignetteCommit={v => onAdjustmentsLive({ ...adjustments, vignette: v })}
+            onVignetteDragStart={onHistoryPush}
           />
         )}
         {activeTab === 'overlay' && (
@@ -98,8 +100,6 @@ export function SideToolbar({
             onDrawTool={onDrawTool}
             onDrawColor={onDrawColor}
             onDrawWidth={onDrawWidth}
-            onDrawUndo={onDrawUndo}
-            canUndo={canUndo}
           />
         )}
       </div>

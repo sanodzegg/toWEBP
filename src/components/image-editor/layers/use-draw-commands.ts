@@ -10,7 +10,7 @@ export type DrawCommand =
   | { type: 'rect';  x: number; y: number; w: number; h: number; color: string; width: number }
 
 export function useDrawCommands() {
-  const [commands, setCommands] = useState<DrawCommand[]>([])
+  const [commands, setCommands_internal] = useState<DrawCommand[]>([])
   // Active stroke lives in a ref — never stale in mousemove callbacks
   const currentRef = useRef<DrawCommand | null>(null)
   const [currentSnapshot, setCurrentSnapshot] = useState<DrawCommand | null>(null)
@@ -38,17 +38,23 @@ export function useDrawCommands() {
 
   const endStroke = useCallback(() => {
     const cmd = currentRef.current
-    if (cmd) setCommands(prev => [...prev, cmd])
+    if (cmd) setCommands_internal(prev => [...prev, cmd])
     currentRef.current = null
     setCurrentSnapshot(null)
   }, [])
 
   const undo = useCallback(() => {
-    setCommands(prev => prev.slice(0, -1))
+    setCommands_internal(prev => prev.slice(0, -1))
   }, [])
 
   const clear = useCallback(() => {
-    setCommands([])
+    setCommands_internal([])
+    currentRef.current = null
+    setCurrentSnapshot(null)
+  }, [])
+
+  const setCommands = useCallback((cmds: DrawCommand[]) => {
+    setCommands_internal(cmds)
     currentRef.current = null
     setCurrentSnapshot(null)
   }, [])
@@ -63,6 +69,7 @@ export function useDrawCommands() {
     endStroke,
     undo,
     clear,
+    setCommands,
   }
 }
 

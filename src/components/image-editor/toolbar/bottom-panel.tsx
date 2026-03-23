@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { Sparkles } from 'lucide-react'
 import { TabAdjust } from './tab-adjust'
@@ -6,25 +6,32 @@ import { TabEffects } from './tab-effects'
 import { TabBgRemove, type BgRemoveStatus } from './tab-bgremove'
 import type { Adjustments } from './types'
 import { DEFAULT_ADJUSTMENTS } from './types'
+import { FILTER_PRESETS } from '../utils/filter-presets'
 
 type BottomTab = 'adjust' | 'effects' | 'bgremove'
 
 interface Props {
   adjustments: Adjustments
   onAdjustments: (a: Adjustments) => void
+  onAdjustmentsCommit: (a: Adjustments) => void
+  onHistoryPush: () => void
   bgRemoveStatus: BgRemoveStatus
   bgRemoveProgress: number
   onBgRemove: () => void
+  onBgRemoveCancel: () => void
 }
 
-export function BottomPanel({ adjustments, onAdjustments, bgRemoveStatus, bgRemoveProgress, onBgRemove }: Props) {
+export function BottomPanel({ adjustments, onAdjustments, onAdjustmentsCommit, onHistoryPush, bgRemoveStatus, bgRemoveProgress, onBgRemove, onBgRemoveCancel }: Props) {
   const [activeTab, setActiveTab] = useState<BottomTab>('adjust')
-  const [activePreset, setActivePreset] = useState<string | null>(null)
 
-  const handleAdjustments = (a: Adjustments) => {
-    setActivePreset(null)
-    onAdjustments(a)
-  }
+  // Derive active preset from current adjustments so undo/redo keeps it in sync
+  const activePreset = useMemo(() => {
+    for (const preset of FILTER_PRESETS) {
+      const merged = { ...DEFAULT_ADJUSTMENTS, ...preset.adjustments }
+      if (JSON.stringify(merged) === JSON.stringify(adjustments)) return preset.label
+    }
+    return null
+  }, [adjustments])
 
   return (
     <div className="rounded-2xl border border-border bg-secondary/20 overflow-hidden">
@@ -54,8 +61,10 @@ export function BottomPanel({ adjustments, onAdjustments, bgRemoveStatus, bgRemo
         {activeTab === 'adjust' && (
           <TabAdjust
             adjustments={adjustments}
-            onChange={handleAdjustments}
-            onReset={() => { onAdjustments(DEFAULT_ADJUSTMENTS); setActivePreset(null) }}
+            onChange={onAdjustments}
+            onCommit={onAdjustments}
+            onDragStart={onHistoryPush}
+            onReset={() => { onAdjustmentsCommit(DEFAULT_ADJUSTMENTS) }}
             grid
           />
         )}
@@ -63,8 +72,8 @@ export function BottomPanel({ adjustments, onAdjustments, bgRemoveStatus, bgRemo
           <TabEffects
             adjustments={adjustments}
             activePreset={activePreset}
-            onChange={onAdjustments}
-            onPresetSelect={setActivePreset}
+            onChange={onAdjustmentsCommit}
+            onPresetSelect={() => {}}
             cols={6}
           />
         )}
@@ -73,6 +82,7 @@ export function BottomPanel({ adjustments, onAdjustments, bgRemoveStatus, bgRemo
             status={bgRemoveStatus}
             progress={bgRemoveProgress}
             onRemove={onBgRemove}
+            onCancel={onBgRemoveCancel}
           />
         )}
       </div>

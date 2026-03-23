@@ -13,6 +13,15 @@ function isImage(filePath) {
   return IMAGE_EXTS.has(path.extname(filePath).toLowerCase())
 }
 
+function isSameFormat(filePath, targetFormat) {
+  const ext = path.extname(filePath).toLowerCase()
+  if (ext === '.' + targetFormat) return true
+  // jpg and jpeg are the same format
+  if (targetFormat === 'jpg' && ext === '.jpeg') return true
+  if (targetFormat === 'jpeg' && ext === '.jpg') return true
+  return false
+}
+
 // Recursively collect all image paths in a directory
 function collectImages(dir) {
   const results = []
@@ -98,7 +107,7 @@ function registerBulkConvertHandlers(mainWindow) {
       path: p,
       relativePath: path.relative(folderPath, p),
       size: fs.statSync(p).size,
-      sameFormat: targetFormat ? path.extname(p).toLowerCase() === '.' + targetFormat : false,
+      sameFormat: targetFormat ? isSameFormat(p, targetFormat) : false,
     }))
   })
 
@@ -108,7 +117,7 @@ function registerBulkConvertHandlers(mainWindow) {
     // Skip files already in the target format (alongside mode would produce src === dest)
     const images = outputMode === 'subfolder'
       ? allImages
-      : allImages.filter(p => path.extname(p).toLowerCase() !== '.' + targetFormat)
+      : allImages.filter(p => !isSameFormat(p, targetFormat))
     const results = []
 
     for (const imgPath of images) {
@@ -171,6 +180,16 @@ function registerBulkConvertHandlers(mainWindow) {
 
     watchers.set(folderPath, watcher)
     return true
+  })
+
+  // Retry a single failed file
+  ipcMain.handle('bulk-retry-file', async (_event, { srcPath, targetFormat, quality, outputMode, deleteOriginal }) => {
+    try {
+      const result = await convertFile(srcPath, targetFormat, quality, outputMode, deleteOriginal, true)
+      return { ok: true, ...result }
+    } catch (err) {
+      return { ok: false, srcPath, error: err.message }
+    }
   })
 
   // Stop watching a folder

@@ -8,9 +8,11 @@ interface Props {
   neutral: number
   step?: number
   onChange: (v: number) => void
+  onCommit?: (v: number) => void
+  onDragStart?: () => void
 }
 
-export function SliderRow({ label, value, min, max, neutral, step = 1, onChange }: Props) {
+export function SliderRow({ label, value, min, max, neutral, step = 1, onChange, onCommit, onDragStart }: Props) {
   const isChanged = value !== neutral
   const delta = value - neutral
   const display = delta > 0 ? `+${delta}` : `${delta}`
@@ -25,13 +27,16 @@ export function SliderRow({ label, value, min, max, neutral, step = 1, onChange 
           {display}
         </span>
       </div>
-      <Slider
-        min={min}
-        max={max}
-        step={step}
-        value={[value]}
-        onValueChange={v => onChange(Array.isArray(v) ? v[0] : v)}
-      />
+      <div onPointerDown={onDragStart}>
+        <Slider
+          min={min}
+          max={max}
+          step={step}
+          value={[value]}
+          onValueChange={v => onChange(Array.isArray(v) ? v[0] : v)}
+          onValueCommit={onCommit ? v => onCommit(Array.isArray(v) ? v[0] : v) : undefined}
+        />
+      </div>
     </div>
   )
 }

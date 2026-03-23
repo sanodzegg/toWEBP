@@ -9,6 +9,7 @@ export interface ConvertedFile extends BulkFileResult {
 export interface BulkState {
   folderPath: string | null
   scannedCount: number
+  sameFormatCount: number
   status: 'idle' | 'scanning' | 'converting' | 'done'
   files: ConvertedFile[]
   progress: { done: number; total: number }
@@ -23,6 +24,7 @@ export interface BulkState {
 const INITIAL: BulkState = {
   folderPath: null,
   scannedCount: 0,
+  sameFormatCount: 0,
   status: 'idle',
   files: [],
   progress: { done: 0, total: 0 },
@@ -70,13 +72,14 @@ export function useBulkConverter() {
     const currentFormat = state.targetFormat
     const images = await window.electron.bulkScanFolder({ folderPath, targetFormat: currentFormat })
     const convertible = images.filter((f: { sameFormat: boolean }) => !f.sameFormat)
-    setState(s => ({ ...s, scannedCount: convertible.length, status: 'idle' }))
+    const sameFormat = images.filter((f: { sameFormat: boolean }) => f.sameFormat)
+    setState(s => ({ ...s, scannedCount: convertible.length, sameFormatCount: sameFormat.length, status: 'idle' }))
   }
 
   const startConvert = async () => {
     if (!state.folderPath) return
 
-    setState(s => ({ ...s, status: 'converting', files: [], progress: { done: 0, total: 0 } }))
+    setState(s => ({ ...s, status: 'converting', files: [], progress: { done: 0, total: 0 }, sameFormatCount: 0 }))
 
     const opts: BulkConvertOptions = {
       folderPath: state.folderPath,
@@ -131,9 +134,42 @@ export function useBulkConverter() {
     setState(INITIAL)
   }
 
-  const setSetting = <K extends keyof BulkState>(key: K, value: BulkState[K]) => {
+  const setSetting = async <K extends keyof BulkState>(key: K, value: BulkState[K]) => {
     setState(s => ({ ...s, [key]: value }))
+
+    if (key === 'targetFormat') {
+      const folderPath = state.folderPath
+      if (!folderPath) return
+      const images = await window.electron.bulkScanFolder({ folderPath, targetFormat: value as string })
+      const convertible = images.filter((f: { sameFormat: boolean }) => !f.sameFormat)
+      const sameFormat = images.filter((f: { sameFormat: boolean }) => f.sameFormat)
+      setState(s => ({ ...s, scannedCount: convertible.length, sameFormatCount: sameFormat.length }))
+    }
   }
 
-  return { state, pickFolder, startConvert, toggleWatch, reset, setSetting }
+  const retryFile = async (fileId: string) => {
+    const file = state.files.find(f => f.id === fileId)
+    if (!file || file.ok) return
+
+    // Mark as retrying (remove from list temporarily, then re-add result)
+    setState(s => ({ ...s, files: s.files.filter(f => f.id !== fileId) }))
+
+    const opts = {
+      srcPath: file.srcPath!,
+      targetFormat: state.targetFormat,
+      quality: state.quality,
+      outputMode: state.outputMode,
+      deleteOriginal: state.deleteOriginal,
+    }
+
+    try {
+      const result = await window.electron.bulkRetryFile(opts)
+      setState(s => ({ ...s, files: [{ ...result, id: uid() }, ...s.files] }))
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      setState(s => ({ ...s, files: [{ ...file, id: uid(), error: errMsg }, ...s.files] }))
+    }
+  }
+
+  return { state, pickFolder, startConvert, toggleWatch, reset, setSetting, retryFile }
 }

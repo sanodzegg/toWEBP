@@ -1,4 +1,4 @@
-import { FolderOpen, Play, Eye, RotateCcw, Loader2 } from 'lucide-react'
+import { FolderOpen, Play, Eye, RotateCcw, Loader2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useBulkConverter } from '@/components/bulk-converter/use-bulk-converter'
@@ -7,7 +7,7 @@ import { BulkFileRow } from '@/components/bulk-converter/bulk-file-row'
 import { BulkSummary } from '@/components/bulk-converter/bulk-summary'
 
 export default function BulkConverter() {
-  const { state, pickFolder, startConvert, toggleWatch, reset, setSetting } = useBulkConverter()
+  const { state, pickFolder, startConvert, toggleWatch, reset, setSetting, retryFile } = useBulkConverter()
 
   const isRunning = state.status === 'converting'
   const hasDone = state.status === 'done' || state.files.length > 0
@@ -98,6 +98,16 @@ export default function BulkConverter() {
 
         {/* Right: results */}
         <div className="flex-1 min-w-0 space-y-4">
+          {/* Same-format warning */}
+          {state.sameFormatCount > 0 && state.status !== 'converting' && (
+            <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-3">
+              <AlertTriangle className="size-4 text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-600 dark:text-amber-400">
+                {state.sameFormatCount} file{state.sameFormatCount !== 1 ? 's are' : ' is'} already in {state.targetFormat.toUpperCase()} format and will be skipped.
+              </p>
+            </div>
+          )}
+
           {/* Progress bar */}
           {(isRunning || state.status === 'done') && state.progress.total > 0 && (
             <div className="space-y-1.5">
@@ -133,7 +143,7 @@ export default function BulkConverter() {
               </div>
               <div className="px-4 max-h-105 overflow-y-auto">
                 {state.files.map(f => (
-                  <BulkFileRow key={f.id} file={f} />
+                  <BulkFileRow key={f.id} file={f} onRetry={retryFile} />
                 ))}
               </div>
             </div>

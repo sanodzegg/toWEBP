@@ -1,13 +1,14 @@
-import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
+import { CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatBytes } from './format-bytes'
 import type { ConvertedFile } from './use-bulk-converter'
 
 interface Props {
   file: ConvertedFile
+  onRetry?: (id: string) => void
 }
 
-export function BulkFileRow({ file }: Props) {
+export function BulkFileRow({ file, onRetry }: Props) {
   const saved = file.savedBytes ?? 0
   const pct = file.originalSize ? Math.round((saved / file.originalSize) * 100) : 0
   const name = file.srcPath?.split('/').pop() ?? file.srcPath ?? ''
@@ -33,7 +34,7 @@ export function BulkFileRow({ file }: Props) {
         )}
       </div>
 
-      {file.ok && (
+      {file.ok ? (
         <div className="shrink-0 text-right">
           <span className={cn(
             'text-xs font-medium',
@@ -48,6 +49,15 @@ export function BulkFileRow({ file }: Props) {
             {saved > 0 ? `-${pct}%` : saved < 0 ? `+${Math.abs(pct)}%` : ''}
           </p>
         </div>
+      ) : onRetry && !file.error?.includes('rename conflicting') && (
+        <button
+          onClick={() => onRetry(file.id)}
+          className="shrink-0 flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          title="Retry"
+        >
+          <RotateCcw className="size-3" />
+          Retry
+        </button>
       )}
     </div>
   )

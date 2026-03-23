@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('electron', {
   bulkConvertFolder: (opts) => ipcRenderer.invoke('bulk-convert-folder', opts),
   bulkWatchStart: (opts) => ipcRenderer.invoke('bulk-watch-start', opts),
   bulkWatchStop: (folderPath) => ipcRenderer.invoke('bulk-watch-stop', folderPath),
+  bulkRetryFile: (opts) => ipcRenderer.invoke('bulk-retry-file', opts),
   onBulkProgress: (cb) => {
     const handler = (_e, data) => cb(data)
     ipcRenderer.on('bulk-convert-progress', handler)

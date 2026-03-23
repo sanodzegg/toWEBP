@@ -1,4 +1,4 @@
-import { Eraser, Loader2 } from 'lucide-react'
+import { Eraser, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export type BgRemoveStatus = 'idle' | 'loading' | 'done' | 'error'
@@ -7,9 +7,10 @@ interface Props {
   status: BgRemoveStatus
   progress: number
   onRemove: () => void
+  onCancel: () => void
 }
 
-export function TabBgRemove({ status, progress, onRemove }: Props) {
+export function TabBgRemove({ status, progress, onRemove, onCancel }: Props) {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground leading-relaxed">
@@ -17,19 +18,26 @@ export function TabBgRemove({ status, progress, onRemove }: Props) {
         Model is downloaded once <em>(~40 MB)</em> and cached locally.
       </p>
 
-      <Button
-        className="w-full gap-2"
-        size="sm"
-        onClick={onRemove}
-        disabled={status === 'loading'}
-      >
-        {status === 'loading' ? (
-          <Loader2 className="size-3.5 animate-spin" />
-        ) : (
+      {status === 'loading' ? (
+        <Button
+          className="w-full gap-2"
+          size="sm"
+          variant="outline"
+          onClick={onCancel}
+        >
+          <X className="size-3.5" />
+          Cancel
+        </Button>
+      ) : (
+        <Button
+          className="w-full gap-2"
+          size="sm"
+          onClick={onRemove}
+        >
           <Eraser className="size-3.5" />
-        )}
-        {status === 'loading' ? 'Removing…' : status === 'done' ? 'Remove Again' : 'Remove Background'}
-      </Button>
+          {status === 'done' ? 'Remove Again' : 'Remove Background'}
+        </Button>
+      )}
 
       {status === 'loading' && (
         <div className="space-y-1.5">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Trash2, Type, Pen, Square, ArrowRight, Undo2, Plus, Minus } from 'lucide-react'
+import { Trash2, Type, Pen, Square, ArrowRight, Plus, Minus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { TextOverlay } from '../layers/use-text-overlays'
 import type { DrawTool } from '../layers/use-draw-commands'
@@ -23,8 +23,6 @@ interface Props {
   onDrawTool: (t: DrawTool) => void
   onDrawColor: (c: string) => void
   onDrawWidth: (w: number) => void
-  onDrawUndo: () => void
-  canUndo: boolean
 }
 
 const DRAW_COLORS = ['#ffffff', '#000000', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7']
@@ -32,7 +30,7 @@ const DRAW_COLORS = ['#ffffff', '#000000', '#ef4444', '#f97316', '#eab308', '#22
 export function TabOverlay({
   mode, onModeChange,
   textOverlays, selectedTextId, onSelectText, onUpdateText, onDeleteText,
-  drawTool, drawColor, drawWidth, onDrawTool, onDrawColor, onDrawWidth, onDrawUndo, canUndo,
+  drawTool, drawColor, drawWidth, onDrawTool, onDrawColor, onDrawWidth,
 }: Props) {
   const selected = textOverlays.find(t => t.id === selectedTextId)
   const [fontSizeInput, setFontSizeInput] = useState('')
@@ -187,19 +185,14 @@ export function TabOverlay({
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Width</span>
-              <Button variant="outline" size="icon-sm" onClick={() => onDrawWidth(Math.max(1, drawWidth - 1))}>
-                <Minus className="size-3" />
-              </Button>
-              <span className="text-xs tabular-nums w-4 text-center">{drawWidth}</span>
-              <Button variant="outline" size="icon-sm" onClick={() => onDrawWidth(Math.min(20, drawWidth + 1))}>
-                <Plus className="size-3" />
-              </Button>
-            </div>
-            <Button variant="outline" size="sm" className="gap-1.5" onClick={onDrawUndo} disabled={!canUndo}>
-              <Undo2 className="size-3.5" /> Undo
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Width</span>
+            <Button variant="outline" size="icon-sm" onClick={() => onDrawWidth(Math.max(1, drawWidth - 1))}>
+              <Minus className="size-3" />
+            </Button>
+            <span className="text-xs tabular-nums w-4 text-center">{drawWidth}</span>
+            <Button variant="outline" size="icon-sm" onClick={() => onDrawWidth(Math.min(20, drawWidth + 1))}>
+              <Plus className="size-3" />
             </Button>
           </div>
         </div>

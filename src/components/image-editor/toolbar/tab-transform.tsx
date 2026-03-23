@@ -8,9 +8,11 @@ interface Props {
   vignette: number
   onTransform: (t: Transform) => void
   onVignette: (v: number) => void
+  onVignetteCommit: (v: number) => void
+  onVignetteDragStart: () => void
 }
 
-export function TabTransform({ transform, vignette, onTransform, onVignette }: Props) {
+export function TabTransform({ transform, vignette, onTransform, onVignette, onVignetteCommit, onVignetteDragStart }: Props) {
   const rotateLeft  = () => onTransform({ ...transform, rotation: (transform.rotation - 90 + 360) % 360 })
   const rotateRight = () => onTransform({ ...transform, rotation: (transform.rotation + 90) % 360 })
 
@@ -59,6 +61,8 @@ export function TabTransform({ transform, vignette, onTransform, onVignette }: P
           max={100}
           neutral={0}
           onChange={onVignette}
+          onCommit={onVignetteCommit}
+          onDragStart={onVignetteDragStart}
         />
       </div>
     </div>

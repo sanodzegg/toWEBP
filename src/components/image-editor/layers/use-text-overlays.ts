@@ -43,5 +43,10 @@ export function useTextOverlays() {
     setSelectedId(null)
   }, [])
 
-  return { overlays, selectedId, setSelectedId, add, update, remove, clear }
+  const setOverlaysExternal = useCallback((ovs: TextOverlay[]) => {
+    setOverlays(ovs)
+    setSelectedId(null)
+  }, [])
+
+  return { overlays, selectedId, setSelectedId, add, update, remove, clear, setOverlays: setOverlaysExternal }
 }

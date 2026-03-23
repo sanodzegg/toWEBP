@@ -11,9 +11,10 @@ type Format = typeof FORMATS[number]
 
 interface Props {
     onExport: (format: Format, quality: number) => void
+    iconOnly?: boolean
 }
 
-export default function ExportDialog({ onExport }: Props) {
+export default function ExportDialog({ onExport, iconOnly }: Props) {
     const [format, setFormat] = useState<Format>('png')
     const [quality, setQuality] = useState(90)
     const isLossy = format !== 'png'
@@ -21,10 +22,16 @@ export default function ExportDialog({ onExport }: Props) {
     return (
         <Dialog>
             <DialogTrigger render={
-                <Button className="gap-2">
-                    <Download className="size-4" />
-                    Export
-                </Button>
+                iconOnly ? (
+                    <Button variant="outline" size="sm" title="Export / Download">
+                        <Download className="size-3.5" />
+                    </Button>
+                ) : (
+                    <Button className="gap-2">
+                        <Download className="size-4" />
+                        Export
+                    </Button>
+                )
             } />
             <DialogContent className="max-w-sm">
                 <DialogHeader>

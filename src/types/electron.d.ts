@@ -29,6 +29,7 @@ declare interface Window {
     bulkConvertFolder: (opts: { folderPath: string; targetFormat: string; quality: number; outputMode: string; deleteOriginal: boolean }) => Promise<BulkFileResult[]>
     bulkWatchStart: (opts: { folderPath: string; targetFormat: string; quality: number; outputMode: string; deleteOriginal: boolean }) => Promise<boolean>
     bulkWatchStop: (folderPath: string) => Promise<boolean>
+    bulkRetryFile: (opts: { srcPath: string; targetFormat: string; quality: number; outputMode: string; deleteOriginal: boolean }) => Promise<BulkFileResult>
     onBulkProgress: (cb: (data: { done: number; total: number; latest: BulkFileResult }) => void) => () => void
     onBulkWatchConverted: (cb: (data: BulkFileResult) => void) => () => void
 
