@@ -12,7 +12,7 @@ export default function QualityPicker() {
 
     return (
         <div className="p-5 rounded-2xl border border-accent bg-secondary/30 space-y-4">
-            <ComparisonSlider quality={quality} />
+            <ComparisonSlider quality={local} />
             <div>
                 <p className="text-sm font-medium text-primary">Quality</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Applies to all conversions. Lower quality = smaller file size.</p>

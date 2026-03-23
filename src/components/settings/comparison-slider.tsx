@@ -33,7 +33,8 @@ export default function ComparisonSlider({ quality }: Props) {
 
   useEffect(() => {
     if (!sourceBufferRef.current) return
-    encode(sourceBufferRef.current, quality)
+    const timer = setTimeout(() => encode(sourceBufferRef.current!, quality), 300)
+    return () => clearTimeout(timer)
   }, [quality])
 
   async function onImgLoad({ currentTarget }: React.SyntheticEvent<HTMLImageElement>) {
