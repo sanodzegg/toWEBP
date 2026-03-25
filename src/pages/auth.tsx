@@ -2,34 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/useAuth'
-import { getLocalCounts, TRIAL_LIMITS } from '@/lib/useConversionCount'
+import { getLocalCounts } from '@/lib/useConversionCount'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import { AccountCard } from '@/components/profile/AccountCard'
+import { UsageCard } from '@/components/profile/UsageCard'
 
 type Mode = 'login' | 'signup'
-
-const PLAN_LABEL: Record<string, string> = {
-    trial: 'Trial',
-    monthly: 'Pro — Monthly',
-    annual: 'Pro — Annual',
-    lifetime: 'Lifetime',
-}
-
-function UsageBar({ used, limit }: { used: number; limit: number }) {
-    const pct = Math.min((used / limit) * 100, 100)
-    const isNear = pct >= 80
-    const isFull = pct >= 100
-    return (
-        <div className="w-full h-1.5 rounded-full bg-accent overflow-hidden">
-            <div
-                className={cn('h-full rounded-full transition-all', isFull ? 'bg-destructive' : isNear ? 'bg-yellow-500' : 'bg-primary')}
-                style={{ width: `${pct}%` }}
-            />
-        </div>
-    )
-}
 
 export default function Auth() {
     const { user, plan, loading } = useAuth()
@@ -60,15 +40,10 @@ export default function Auth() {
         setSubmitting(false)
     }
 
-    async function handleSignOut() {
-        await supabase.auth.signOut()
-    }
-
     if (loading) return null
 
     if (user) {
         const counts = getLocalCounts()
-        const isTrial = plan === 'trial'
 
         return (
             <section className="section py-8">
@@ -78,60 +53,8 @@ export default function Auth() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                    {/* Account info */}
-                    <div className="rounded-2xl border border-border p-5 space-y-3">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Account</p>
-                        <div>
-                            <p className="text-sm font-medium text-foreground">{user.email}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                                Member since {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                            </p>
-                        </div>
-                        <Button variant="outline" size="sm" onClick={handleSignOut}>Sign out</Button>
-                    </div>
-
-                    {/* Usage — only meaningful for trial */}
-                    <div className="rounded-2xl border border-border p-5 space-y-3">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Usage</p>
-                        {isTrial ? (
-                            <div className="space-y-3">
-                                {([
-                                    { label: 'Images', used: counts.image, limit: TRIAL_LIMITS.image },
-                                    { label: 'Documents', used: counts.document, limit: TRIAL_LIMITS.document },
-                                    { label: 'Videos', used: counts.video, limit: TRIAL_LIMITS.video },
-                                ] as const).map(({ label, used, limit }) => (
-                                    <div key={label} className="space-y-1">
-                                        <div className="flex items-center justify-between">
-                                            <p className="text-xs text-muted-foreground">{label}</p>
-                                            <p className="text-xs text-foreground">{used} / {limit}</p>
-                                        </div>
-                                        <UsageBar used={used} limit={limit} />
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="space-y-1">
-                                <p className="text-sm text-foreground font-medium">Unlimited</p>
-                                <p className="text-xs text-muted-foreground">
-                                    Images: {counts.image} &middot; Documents: {counts.document} &middot; Videos: {counts.video}
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                    
-                    {/* Plan */}
-                    <div className="rounded-2xl border border-border p-5 space-y-3">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Plan</p>
-                        <div>
-                            <p className="text-sm font-medium text-foreground">{PLAN_LABEL[plan] ?? plan}</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                                {isTrial ? 'Limited conversions — upgrade for unlimited access.' : 'Unlimited conversions.'}
-                            </p>
-                        </div>
-                        {isTrial && (
-                            <Button size="sm" onClick={() => navigate('/pricing')}>Upgrade</Button>
-                        )}
-                    </div>
+                    <AccountCard user={user} plan={plan} />
+                    <UsageCard plan={plan} counts={counts} />
                 </div>
             </section>
         )
