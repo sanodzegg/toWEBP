@@ -86,7 +86,7 @@ export default function File({ data }: { data: File }) {
                     : <MoveRight size={24} className="stroke-accent" />
                 }
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-75 justify-end">
                 <Combobox value={targetFormat} onValueChange={(v) => !isConverting && setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
                     <ComboboxInput className={'w-24! h-10! [&_input]:uppercase! [&_input]:select-none!'} readOnly />
                     <ComboboxContent>
