@@ -1,24 +1,36 @@
-import { useState, useMemo } from "react"
-import SvgDropzone from "@/components/svg-editor/svg-dropzone"
-import { Button } from "@/components/ui/button"
-import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from "@/components/ui/combobox"
-import { cn } from "@/lib/utils"
-import { Check, Copy, RotateCcw } from "lucide-react"
+import { useState, useMemo } from 'react'
+import { RotateCcw, Check, Copy } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Combobox, ComboboxInput, ComboboxContent, ComboboxList, ComboboxItem } from '@/components/ui/combobox'
+import { cn } from '@/lib/utils'
+import SvgDropzone from '@/components/svg-editor/svg-dropzone'
+import { SvgCodeEditor } from '@/components/svg-editor/SvgCodeEditor'
 import {
     optimizeSvg, toBase64Uri, toEncodedUri, toMinifiedUri,
     byteSize, toCodeSnippet, CODE_FORMAT_OPTIONS, type CodeFormat,
-} from "@/components/svg-editor/svg-utils"
-
-// ── Tabs ──────────────────────────────────────────────────────────────────────
+} from '@/components/svg-editor/svg-utils'
 
 type Tab = 'preview' | 'code' | 'data-uri'
 
 const BG_OPTIONS = [
-    { label: 'Transparent', value: 'transparent', class: 'bg-[url(\'data:image/svg+xml,%3Csvg xmlns=\\\'http://www.w3.org/2000/svg\\\' width=\\\'8\\\' height=\\\'8\\\'%3E%3Crect width=\\\'4\\\' height=\\\'4\\\' fill=\\\'%23ccc\\\'/%3E%3Crect x=\\\'4\\\' y=\\\'4\\\' width=\\\'4\\\' height=\\\'4\\\' fill=\\\'%23ccc\\\'/%3E%3C/svg%3E\')]' },
+    { label: 'Transparent', value: 'transparent', class: 'bg-[repeating-conic-gradient(#808080_0%_25%,transparent_0%_50%)] bg-[length:16px_16px]' },
     { label: 'White', value: 'white', class: 'bg-white' },
     { label: 'Black', value: 'black', class: 'bg-black' },
     { label: 'Gray', value: 'gray', class: 'bg-zinc-800' },
 ]
+
+function preparePreview(code: string): string {
+    return code
+        .replace(/<\?xml[\s\S]*?\?>\s*/gi, '')
+        .replace(/<!--[\s\S]*?-->\s*/g, '')
+        .replace(/<svg([\s\S]*?)>/i, (_, attrs) => {
+            const cleaned = attrs
+                .replace(/\s*\bwidth="[^"]*"/gi, '')
+                .replace(/\s*\bheight="[^"]*"/gi, '')
+                .replace(/\s*\bpreserveAspectRatio="[^"]*"/gi, '')
+            return `<svg${cleaned} preserveAspectRatio="xMidYMid meet">`
+        })
+}
 
 function CopyButton({ text }: { text: string }) {
     const [copied, setCopied] = useState(false)
@@ -51,8 +63,6 @@ function DataUriRow({ label, value }: { label: string; value: string }) {
     )
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-
 export default function SvgEditor() {
     const [code, setCode] = useState<string | null>(null)
     const [tab, setTab] = useState<Tab>('preview')
@@ -69,12 +79,9 @@ export default function SvgEditor() {
         return before === 0 ? 0 : Math.round((1 - after / before) * 100)
     }, [code, optimizedCode])
 
-    const displayCode = useMemo(() => {
-        if (!code) return ''
-        const base = optimized ? optimizedCode : code
-        return toCodeSnippet(base, codeFormat)
-    }, [code, optimized, optimizedCode, codeFormat])
-
+    const activeCode = optimized ? optimizedCode : (code ?? '')
+    const previewHtml = useMemo(() => preparePreview(activeCode), [activeCode])
+    const displayCode = useMemo(() => toCodeSnippet(activeCode, codeFormat), [activeCode, codeFormat])
     const bgClass = BG_OPTIONS.find(b => b.value === bg)?.class ?? 'bg-white'
 
     if (!code) {
@@ -107,8 +114,8 @@ export default function SvgEditor() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 h-140">
-                {/* Left — code editor */}
-                <div className="flex flex-col gap-2">
+                {/* Left: CodeMirror editor */}
+                <div className="flex flex-col gap-2 min-h-0">
                     <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground font-medium">Source</span>
                         <div className="flex items-center gap-2">
@@ -120,28 +127,27 @@ export default function SvgEditor() {
                             >
                                 {optimized ? 'Optimized' : savings > 0 ? `Optimize −${savings}%` : 'Optimize'}
                             </Button>
-                            <CopyButton text={optimized ? optimizedCode : code} />
+                            <CopyButton text={activeCode} />
                         </div>
                     </div>
-                    <textarea
-                        value={optimized ? optimizedCode : code}
-                        onChange={e => { setCode(e.target.value); setOptimized(false) }}
-                        className="flex-1 w-full rounded-xl border border-border bg-muted/30 text-xs text-foreground font-mono p-3 resize-none focus:outline-none focus:border-primary transition-colors"
-                        spellCheck={false}
+                    <SvgCodeEditor
+                        value={activeCode}
+                        onChange={v => { setCode(v); setOptimized(false) }}
                     />
                 </div>
 
-                {/* Right — tabs */}
+                {/* Right: tabs */}
                 <div className="flex flex-col gap-2 min-h-0">
-                    {/* Tab bar */}
                     <div className="flex items-center gap-1 border-b border-border pb-2">
                         {(['preview', 'code', 'data-uri'] as Tab[]).map(t => (
                             <button
                                 key={t}
                                 onClick={() => setTab(t)}
                                 className={cn(
-                                    "px-3 py-1 text-xs rounded-md transition-colors",
-                                    tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                    'px-3 py-1 text-xs rounded-md transition-colors',
+                                    tab === t
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                                 )}
                             >
                                 {t === 'data-uri' ? 'Data URI' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -149,48 +155,38 @@ export default function SvgEditor() {
                         ))}
                     </div>
 
-                    {/* Preview tab */}
                     {tab === 'preview' && (
-                        <div className="flex flex-col gap-3 flex-1">
+                        <div className="flex flex-col gap-3 flex-1 min-h-0">
                             <div className="flex items-center gap-2">
                                 {BG_OPTIONS.map(opt => (
                                     <button
                                         key={opt.value}
-                                        onClick={() => setBg(opt.value)}
                                         title={opt.label}
+                                        onClick={() => setBg(opt.value)}
                                         className={cn(
-                                            "h-6 w-6 rounded-md border-2 transition-colors",
-                                            opt.value === 'transparent' ? "bg-[repeating-conic-gradient(#ccc_0%_25%,white_0%_50%)] bg-size-[8px_8px]" :
-                                            opt.value === 'white' ? "bg-white" :
-                                            opt.value === 'black' ? "bg-black" : "bg-zinc-800",
-                                            bg === opt.value ? "border-primary" : "border-border"
+                                            'h-6 w-6 rounded-md border-2 transition-colors',
+                                            opt.class,
+                                            bg === opt.value ? 'border-primary' : 'border-border'
                                         )}
                                     />
                                 ))}
                             </div>
-                            <div className={cn("flex-1 rounded-xl flex items-center justify-center overflow-hidden", bgClass)}>
-                                <div
-                                    className="w-full h-full"
-                                    dangerouslySetInnerHTML={{ __html: code
-                                        .replace(/<\?xml[^>]*\?>\s*/g, '')
-                                        .replace(/<svg([^>]*)>/, (_, attrs) => {
-                                            const hasW = /\bwidth=/.test(attrs)
-                                            const hasH = /\bheight=/.test(attrs)
-                                            const w = hasW ? '' : ' width="100%"'
-                                            const h = hasH ? '' : ' height="100%"'
-                                            return `<svg${attrs}${w}${h}>`
-                                        })
-                                    }}
-                                />
+                            <div className={cn('flex-1 rounded-xl relative flex items-center justify-center overflow-hidden', bgClass)}>
+                                <style>{`.svg-preview svg { display: block; max-width: calc(100% - 48px); max-height: calc(100% - 48px); width: auto; height: auto; overflow: visible; }`}</style>
+                                <div className="svg-preview flex items-center justify-center w-full h-full" dangerouslySetInnerHTML={{ __html: previewHtml }} />
                             </div>
                         </div>
                     )}
 
-                    {/* Code tab */}
                     {tab === 'code' && (
                         <div className="flex flex-col gap-3 flex-1 min-h-0">
                             <div className="flex items-center justify-between">
-                                <Combobox value={codeFormat} onValueChange={v => v && setCodeFormat(v as CodeFormat)} items={CODE_FORMAT_OPTIONS.map(o => o.value)} filter={null}>
+                                <Combobox
+                                    value={codeFormat}
+                                    onValueChange={v => v && setCodeFormat(v as CodeFormat)}
+                                    items={CODE_FORMAT_OPTIONS.map(o => o.value)}
+                                    filter={null}
+                                >
                                     <ComboboxInput className="w-36! h-8! [&_input]:select-none!" readOnly />
                                     <ComboboxContent>
                                         <ComboboxList>
@@ -210,12 +206,11 @@ export default function SvgEditor() {
                         </div>
                     )}
 
-                    {/* Data URI tab */}
                     {tab === 'data-uri' && (
                         <div className="flex flex-col gap-4 flex-1 overflow-y-auto">
-                            <DataUriRow label="Base64" value={toBase64Uri(code)} />
-                            <DataUriRow label="encodeURIComponent" value={toEncodedUri(code)} />
-                            <DataUriRow label="Minified (encodeURIComponent)" value={toMinifiedUri(code)} />
+                            <DataUriRow label="Base64" value={toBase64Uri(activeCode)} />
+                            <DataUriRow label="encodeURIComponent" value={toEncodedUri(activeCode)} />
+                            <DataUriRow label="Minified (encodeURIComponent)" value={toMinifiedUri(activeCode)} />
                         </div>
                     )}
                 </div>

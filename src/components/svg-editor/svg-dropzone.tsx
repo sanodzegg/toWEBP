@@ -1,6 +1,7 @@
-import { Import } from "lucide-react"
-import { Button } from "../ui/button"
-import { useRef, useState } from "react"
+import { useRef, useState } from 'react'
+import { Import } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { isValidSvg } from './svg-utils'
 
 interface Props {
     onSvg: (code: string) => void
@@ -8,59 +9,73 @@ interface Props {
 
 export default function SvgDropzone({ onSvg }: Props) {
     const inputRef = useRef<HTMLInputElement>(null)
-    const wrapperRef = useRef<HTMLDivElement>(null)
-    const [pasteValue, setPasteValue] = useState('')
+    const dropRef = useRef<HTMLDivElement>(null)
+    const [paste, setPaste] = useState('')
+    const [dragging, setDragging] = useState(false)
 
-    const handleFiles = (files: FileList | null) => {
-        const file = Array.from(files ?? []).find(f => f.type === 'image/svg+xml' || f.name.endsWith('.svg'))
-        if (!file) return
+    function readFile(file: File) {
         const reader = new FileReader()
         reader.onload = e => {
             const text = e.target?.result as string
-            if (text) onSvg(text)
+            if (text && isValidSvg(text)) onSvg(text)
         }
         reader.readAsText(file)
     }
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        handleFiles(e.dataTransfer.files)
-        wrapperRef.current?.classList.remove('dragenter')
+    function handleFiles(files: FileList | null) {
+        const file = Array.from(files ?? []).find(
+            f => f.type === 'image/svg+xml' || f.name.endsWith('.svg')
+        )
+        if (file) readFile(file)
     }
 
-    const isValidSvg = (s: string) => /<svg[\s>]/i.test(s)
+    function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+        setDragging(false)
+        handleFiles(e.dataTransfer.files)
+    }
 
-    const handlePaste = () => {
-        const trimmed = pasteValue.trim()
+    function handleLoad() {
+        const trimmed = paste.trim()
         if (isValidSvg(trimmed)) onSvg(trimmed)
     }
 
     return (
         <div className="flex flex-col gap-4">
-            <form>
+            <form onSubmit={e => e.preventDefault()}>
                 <input
                     ref={inputRef}
-                    accept=".svg,image/svg+xml"
-                    onChange={e => { handleFiles(e.target.files); e.target.value = '' }}
-                    className="sr-only"
                     type="file"
+                    accept=".svg,image/svg+xml"
+                    className="sr-only"
+                    onChange={e => { handleFiles(e.target.files); e.target.value = '' }}
                 />
                 <div
-                    ref={wrapperRef}
+                    ref={dropRef}
                     onDrop={handleDrop}
                     onDragOver={e => e.preventDefault()}
-                    onDragEnter={() => wrapperRef.current?.classList.add('dragenter')}
-                    onDragLeave={() => wrapperRef.current?.classList.remove('dragenter')}
-                    className="flex flex-col items-center justify-center py-10 w-full h-72 border border-border hover:border-primary rounded-3xl border-dashed transition-colors cursor-pointer gap-4 [&.dragenter]:bg-accent"
+                    onDragEnter={() => setDragging(true)}
+                    onDragLeave={() => setDragging(false)}
+                    className={`flex flex-col items-center justify-center py-10 w-full h-72 border border-dashed border-border rounded-3xl transition-colors gap-4 cursor-pointer ${dragging ? 'bg-accent border-primary' : 'hover:border-primary'}`}
                 >
-                    <Button onClick={() => inputRef.current?.click()} variant="outline" className="w-16 h-16 border-border hover:border-primary transition-colors">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        className="w-16 h-16 border-border hover:border-primary transition-colors"
+                        onClick={() => inputRef.current?.click()}
+                    >
                         <Import className="size-8 stroke-primary" />
                     </Button>
                     <div className="text-center">
                         <h2 className="text-xl font-body font-semibold text-foreground">Drop an SVG file here</h2>
                         <p className="text-sm text-muted-foreground mt-1">or browse to upload</p>
                     </div>
-                    <Button onClick={() => inputRef.current?.click()} className="bg-primary h-10 w-48" variant="default">
+                    <Button
+                        type="button"
+                        variant="default"
+                        className="h-10 w-48"
+                        onClick={() => inputRef.current?.click()}
+                    >
                         Browse SVG
                     </Button>
                 </div>
@@ -69,13 +84,17 @@ export default function SvgDropzone({ onSvg }: Props) {
             <div className="flex flex-col gap-2">
                 <p className="text-sm text-muted-foreground">Or paste SVG code</p>
                 <textarea
-                    value={pasteValue}
-                    onChange={e => setPasteValue(e.target.value)}
+                    value={paste}
+                    onChange={e => setPaste(e.target.value)}
                     placeholder="<svg xmlns=..."
                     rows={5}
                     className="w-full rounded-xl border border-border bg-background text-sm text-foreground font-mono p-3 resize-none focus:outline-none focus:border-primary transition-colors"
                 />
-                <Button onClick={handlePaste} disabled={!isValidSvg(pasteValue.trim())} className="self-end">
+                <Button
+                    onClick={handleLoad}
+                    disabled={!isValidSvg(paste.trim())}
+                    className="self-end"
+                >
                     Load SVG
                 </Button>
             </div>
