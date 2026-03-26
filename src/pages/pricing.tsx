@@ -74,7 +74,7 @@ export default function Pricing() {
                     playsInline
                     onCanPlay={() => setVideoReady(true)}
                     className="absolute inset-0 w-full h-full object-cover pointer-events-none hidden dark:block transition-opacity duration-700"
-                    style={{ opacity: videoReady ? .5 : 0 }}
+                    style={{ opacity: videoReady ? .7 : 0 }}
                 />
                 <div className="relative z-10 mb-10 text-center">
                     <h2 className="text-4xl font-body font-semibold text-foreground mb-3">Simple, transparent pricing</h2>
