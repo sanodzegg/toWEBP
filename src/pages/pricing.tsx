@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Clock, Zap, Star } from 'lucide-react'
 import { PricingCard } from '@/components/pricing/pricing-card'
+import { useAuth } from '@/lib/useAuth'
 import pricingBg from '@/assets/pricing-bg.webm'
 
 type Interval = 'monthly' | 'annual'
@@ -60,6 +61,7 @@ const PLANS = [
 ]
 
 export default function Pricing() {
+    const { plan } = useAuth()
     const [interval, setInterval] = useState<Interval>('annual')
     const [videoReady, setVideoReady] = useState(false)
 
@@ -80,21 +82,29 @@ export default function Pricing() {
                     <h2 className="text-4xl font-body font-semibold text-foreground mb-3">Simple, transparent pricing</h2>
                     <p className="text-sm text-muted-foreground">No subscriptions required. Start free, upgrade when you need more.</p>
                 </div>
-                <div className="relative z-10 grid grid-cols-3 gap-4 items-start">
-                    {PLANS.map(plan => (
-                        <PricingCard
-                            key={plan.id}
-                            icon={plan.icon}
-                            title={plan.title}
-                            description={plan.description}
-                            price={plan.price}
-                            priceSuffix={plan.priceSuffix}
-                            features={plan.features}
-                            ctaLabel={plan.ctaLabel}
-                            ctaVariant={plan.ctaVariant}
-                            {...(plan.id === 'pro' && { interval, onIntervalChange: setInterval })}
-                        />
-                    ))}
+                <div className="relative z-10 grid grid-cols-3 gap-4 items-center">
+                    {PLANS.map(p => {
+                        const isCurrent =
+                            (p.id === 'trial' && plan === 'trial') ||
+                            (p.id === 'pro' && (plan === 'monthly' || plan === 'annual')) ||
+                            (p.id === 'lifetime' && plan === 'lifetime')
+                        const badge = isCurrent ? 'current' : p.id === 'pro' ? 'popular' : p.id === 'lifetime' ? 'best-value' : undefined
+                        return (
+                            <PricingCard
+                                key={p.id}
+                                icon={p.icon}
+                                title={p.title}
+                                description={p.description}
+                                price={p.price}
+                                priceSuffix={p.priceSuffix}
+                                features={p.features}
+                                ctaLabel={p.ctaLabel}
+                                ctaVariant={p.ctaVariant}
+                                badge={badge}
+                                {...(p.id === 'pro' && { interval, onIntervalChange: setInterval })}
+                            />
+                        )
+                    })}
                 </div>
             </div>
         </section>

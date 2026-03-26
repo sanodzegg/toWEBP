@@ -6,6 +6,7 @@ import { CountingNumber } from '@/components/animate-ui/primitives/texts/countin
 import { cn } from '@/lib/utils'
 
 type Interval = 'monthly' | 'annual'
+type Badge = 'current' | 'popular' | 'best-value'
 
 export interface PricingCardProps {
     icon: LucideIcon
@@ -18,6 +19,13 @@ export interface PricingCardProps {
     ctaVariant?: 'default' | 'outline'
     interval?: Interval
     onIntervalChange?: (interval: Interval) => void
+    badge?: Badge
+}
+
+const BADGE_CONFIG: Record<Badge, { label: string; className: string }> = {
+    current: { label: 'Current Plan', className: 'bg-foreground/10 text-foreground border border-foreground/20' },
+    popular: { label: 'Most Popular', className: 'bg-primary text-primary-foreground' },
+    'best-value': { label: 'Best Value', className: 'bg-primary text-primary-foreground' },
 }
 
 export function PricingCard({
@@ -31,14 +39,23 @@ export function PricingCard({
     ctaVariant = 'default',
     interval,
     onIntervalChange,
+    badge,
 }: PricingCardProps) {
     const displayPrice = typeof price === 'object'
         ? (interval === 'monthly' ? price.monthly : price.annual)
         : price
 
     return (
-        <Card className="relative overflow-hidden border-border backdrop-blur-xl bg-muted/50 dark:bg-black/30 dark:border-white/20">
-            <div className="pointer-events-none absolute inset-0 rounded-2xl bg-linear-to-br from-foreground/10 to-transparent" />
+        <Card className="relative border-border backdrop-blur-xl bg-muted/50 dark:bg-black/30 dark:border-white/20">
+            <div className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden bg-linear-to-br from-foreground/10 to-transparent" />
+
+            {badge && badge !== 'current' && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <span className={cn('text-xs font-medium px-3 py-1 rounded-full block', BADGE_CONFIG[badge].className)}>
+                        {BADGE_CONFIG[badge].label}
+                    </span>
+                </div>
+            )}
 
             <CardHeader className="relative gap-4">
                 <div className="size-14 rounded-2xl flex items-center justify-center shrink-0 bg-foreground/10 border border-foreground/15">
@@ -114,7 +131,9 @@ export function PricingCard({
             </CardContent>
 
             <CardFooter className="relative">
-                <Button variant={ctaVariant} className="w-full">{ctaLabel}</Button>
+                <Button variant={ctaVariant} className="w-full" disabled={badge === 'current'}>
+                    {badge === 'current' ? 'Current Plan' : ctaLabel}
+                </Button>
             </CardFooter>
         </Card>
     )
