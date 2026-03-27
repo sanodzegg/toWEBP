@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
-const Homepage = lazy(() => import('./pages/homepage'))
+import Homepage from './pages/homepage'
 const Settings = lazy(() => import('./pages/settings'))
 const FaviconConversion = lazy(() => import('./pages/favicons'))
 const ImageEditor = lazy(() => import('./pages/image-editor'))
