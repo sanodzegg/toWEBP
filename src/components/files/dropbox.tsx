@@ -62,17 +62,17 @@ export default function Dropbox() {
     return (
         <form>
             <input ref={inputRef} multiple onChange={handleInputChange} className="sr-only" type="file" name="userFiles" id="userFiles" accept={getAllSupportedExtensions().map(e => `.${e}`).join(',')} />
-            <div ref={wrapperRef} onDrop={handleDrop} onDragOver={preventDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragEnd={handleDragEnd} className="flex flex-col items-center justify-center w-full border border-border hover:border-primary rounded-3xl border-dashed transition-colors cursor-pointer gap-4 [&.dragenter]:bg-accent pt-10 pb-8">
-                <Button onClick={handleClickRedirection} variant="outline" className="w-20 h-20 border-border hover:border-primary transition-colors">
-                    <Import className="size-10 stroke-primary" />
+            <div ref={wrapperRef} onDrop={handleDrop} onDragOver={preventDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDragEnd={handleDragEnd} className="flex flex-col items-center justify-center w-full border border-border hover:border-primary rounded-3xl border-dashed transition-colors cursor-pointer gap-4 [&.dragenter]:bg-accent pt-10 pb-8 2xl:pt-14 2xl:pb-10 2xl:gap-5">
+                <Button onClick={handleClickRedirection} variant="outline" className="w-20 h-20 2xl:w-24 2xl:h-24 border-border hover:border-primary transition-colors">
+                    <Import className="size-10 2xl:size-12 stroke-primary" />
                 </Button>
 
                 <div className="text-center">
-                    <h2 className="text-2xl font-body font-semibold text-foreground">Drop files here</h2>
-                    <p className="text-sm text-muted-foreground mt-1">or browse from your computer</p>
+                    <h2 className="text-2xl 2xl:text-3xl font-body font-semibold text-foreground">Drop files here</h2>
+                    <p className="text-sm 2xl:text-base text-muted-foreground mt-1">or browse from your computer</p>
                 </div>
 
-                <div className="flex flex-col items-center gap-3 w-full max-w-lg px-8">
+                <div className="flex flex-col items-center gap-3 w-full max-w-lg 2xl:max-w-xl px-8">
                     <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                         {groups.map(group => (
                             <button
@@ -80,7 +80,7 @@ export default function Dropbox() {
                                 type="button"
                                 onClick={() => setActiveGroup(group.label)}
                                 className={cn(
-                                    'px-4 py-1.5 rounded-full text-sm border transition-colors',
+                                    'px-4 py-1.5 2xl:px-5 2xl:py-2 rounded-full text-sm 2xl:text-base border transition-colors',
                                     activeGroup === group.label
                                         ? 'border-primary text-primary bg-primary/10'
                                         : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
@@ -91,14 +91,14 @@ export default function Dropbox() {
                         ))}
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-1.5 h-24 content-start overflow-hidden">
+                    <div className="flex flex-wrap justify-center gap-1.5 h-24 2xl:h-28 content-start overflow-hidden">
                         {activeFormats.map(fmt => (
-                            <Badge variant="secondary" key={fmt} className="rounded-sm px-2.5 py-1.5 text-sm font-light text-primary">{fmt}</Badge>
+                            <Badge variant="secondary" key={fmt} className="rounded-sm px-2.5 py-1.5 2xl:p-3 text-sm 2xl:text-base font-light text-primary">{fmt}</Badge>
                         ))}
                     </div>
                 </div>
 
-                <Button onClick={handleClickRedirection} className="bg-primary h-12 w-60 text-lg" variant="default">Browse Files</Button>
+                <Button onClick={handleClickRedirection} className="bg-primary h-12 w-60 2xl:h-14 2xl:w-72 text-lg 2xl:text-xl" variant="default">Browse Files</Button>
                 {skipMessage && (
                     <p className="text-xs text-muted-foreground">{skipMessage}</p>
                 )}

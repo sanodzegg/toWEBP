@@ -190,7 +190,7 @@
   }
 
   .section {
-    @apply max-w-5xl px-10 mx-auto;
+    @apply max-w-5xl px-10 mx-auto 2xl:max-w-7xl 2xl:px-14;
   }
 
   button {

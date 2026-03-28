@@ -74,46 +74,46 @@ export default function ConvertedFiles() {
     }
 
     return (
-        <section className="py-6">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-primary font-body text-base">
+        <section className="py-6 2xl:py-8">
+            <div className="flex items-center justify-between mb-4 2xl:mb-6">
+                <h3 className="font-medium text-primary font-body text-base 2xl:text-lg">
                     Converted ({snapshot.length}){failedEntries.length > 0 && <span className="text-destructive ml-2">· {failedEntries.length} failed</span>}
                 </h3>
                 <div className="flex items-center gap-x-2">
                     <Button onClick={downloadAll} disabled={!isDone || isZipping} variant={'secondary'} className={'group p-2.5! h-full!'}>
-                        {isZipping ? <Loader2 className="size-5 animate-spin" /> : <Download className="size-5" />}
+                        {isZipping ? <Loader2 className="size-5 2xl:size-6 animate-spin" /> : <Download className="size-5 2xl:size-6" />}
                     </Button>
                     <Tooltip>
                         <TooltipTrigger>
                             <Button onClick={resetAppState} variant={'secondary'} className={'group p-2.5! h-full!'}>
-                                <RefreshCcw className="size-5 group-hover:animate-spin-once" />
+                                <RefreshCcw className="size-5 2xl:size-6 group-hover:animate-spin-once" />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p className="text-sm font-light text-accent">Refresh Converting</p>
+                            <p className="text-sm 2xl:text-base font-light text-accent">Refresh Converting</p>
                         </TooltipContent>
                     </Tooltip>
                 </div>
             </div>
             {snapshot.length > 0 && (
-                <ul className="space-y-2.5">
+                <ul className="space-y-2.5 2xl:space-y-3">
                     {snapshot.map((f) => (
-                        <li key={`${f.name}-${f.inputSize}`} className="flex items-center justify-between p-4 rounded-2xl border border-accent bg-secondary/30">
+                        <li key={`${f.name}-${f.inputSize}`} className="flex items-center justify-between p-4 2xl:p-5 rounded-2xl border border-accent bg-secondary/30">
                             <div className="flex items-center gap-2 min-w-0">
                                 <Tooltip>
                                     <TooltipTrigger className="flex-1 min-w-0 text-left">
-                                        <span className="text-sm text-accent-foreground font-body truncate cursor-default block w-full">{f.name}</span>
+                                        <span className="text-sm 2xl:text-base text-accent-foreground font-body truncate cursor-default block w-full">{f.name}</span>
                                     </TooltipTrigger>
-                                    <TooltipContent><p>{f.name}</p></TooltipContent>
+                                    <TooltipContent><p className="text-sm 2xl:text-base">{f.name}</p></TooltipContent>
                                 </Tooltip>
                                 {f.customized && (
-                                    <span className="shrink-0 text-xs font-medium px-1.5 py-0.5 rounded-md bg-yellow-400/20 text-yellow-600 dark:text-yellow-400 border border-yellow-400/30">
+                                    <span className="shrink-0 text-xs 2xl:text-sm font-medium px-1.5 py-0.5 rounded-md bg-yellow-400/20 text-yellow-600 dark:text-yellow-400 border border-yellow-400/30">
                                         Modified
                                     </span>
                                 )}
                             </div>
-                            <Button variant="secondary" onClick={() => handleDownload(f.blob, f.name)} className="text-xs text-primary ml-2 shrink-0">
-                                <Download className="size-3.5 mr-1" />
+                            <Button variant="secondary" onClick={() => handleDownload(f.blob, f.name)} className="text-xs 2xl:text-sm text-primary ml-2 shrink-0">
+                                <Download className="size-3.5 2xl:size-4 mr-1" />
                                 Download
                             </Button>
                         </li>

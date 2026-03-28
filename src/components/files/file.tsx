@@ -63,15 +63,15 @@ export default function File({ data }: { data: File }) {
     if (isDone) return null;
 
     return (
-        <div className={`flex items-center justify-start p-4 rounded-2xl border bg-secondary/30 ${failedError ? 'border-destructive/40 bg-destructive/5' : isConverting ? 'border-primary/40 bg-primary/5' : 'border-accent'}`}>
-            <Badge variant={'secondary'} className="shrink-0 uppercase h-10 w-10 rounded-sm mr-2" style={colorStyle}>
+        <div className={`flex items-center justify-start p-4 2xl:p-5 rounded-2xl border bg-secondary/30 ${failedError ? 'border-destructive/40 bg-destructive/5' : isConverting ? 'border-primary/40 bg-primary/5' : 'border-accent'}`}>
+            <Badge variant={'secondary'} className="shrink-0 uppercase h-10 w-10 2xl:h-12 2xl:w-12 rounded-sm mr-2 2xl:mr-3" style={colorStyle}>
                 {ext}
             </Badge>
             <div className="flex flex-col min-w-0 flex-1">
-                <h3 className="text-sm font-normal text-accent-foreground font-body truncate">{data.name}</h3>
+                <h3 className="text-sm 2xl:text-base font-normal text-accent-foreground font-body truncate">{data.name}</h3>
                 {failedError
-                    ? <p className="text-xs font-normal text-destructive">{failedError}</p>
-                    : <p className="text-xs font-normal text-accent-foreground/50">
+                    ? <p className="text-xs 2xl:text-sm font-normal text-destructive">{failedError}</p>
+                    : <p className="text-xs 2xl:text-sm font-normal text-accent-foreground/50">
                         {formatBytes(data.size)}
                         {estimatedSize !== null && (
                             <span className="ml-1.5">
@@ -83,13 +83,13 @@ export default function File({ data }: { data: File }) {
             </div>
             <div className="flex-1 flex justify-center">
                 {isConverting
-                    ? <Loader2 className="size-5 text-primary animate-spin" />
-                    : <MoveRight size={24} className="stroke-accent" />
+                    ? <Loader2 className="size-5 2xl:size-6 text-primary animate-spin" />
+                    : <MoveRight size={24} className="stroke-accent 2xl:size-7" />
                 }
             </div>
-            <div className="flex items-center gap-2 shrink-0 justify-end min-w-70.5">
+            <div className="flex items-center gap-2 shrink-0 justify-end min-w-70.5 2xl:min-w-84">
                 <Combobox value={targetFormat} onValueChange={(v) => !isConverting && setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
-                    <ComboboxInput className={`w-24! h-10! [&_input]:uppercase! [&_input]:select-none! ${isConverting ? 'opacity-50 pointer-events-none' : ''}`} readOnly />
+                    <ComboboxInput className={`w-24! h-10! 2xl:w-28! 2xl:h-11! [&_input]:uppercase! [&_input]:select-none! ${isConverting ? 'opacity-50 pointer-events-none' : ''}`} readOnly />
                     <ComboboxContent>
                         <ComboboxList>
                             {(item) => (
@@ -107,29 +107,29 @@ export default function File({ data }: { data: File }) {
                         </span>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p className="text-sm font-light text-accent">File Settings</p>
+                        <p className="text-sm 2xl:text-base font-light text-accent">File Settings</p>
                     </TooltipContent>
                 </Tooltip>
                 {isImage && (
                     <Tooltip>
                         <TooltipTrigger>
                             <Button variant={'secondary'} className={'group p-2.5! h-full!'} disabled={isConverting} onClick={handleEditInEditor}>
-                                <Pencil className="size-4" />
+                                <Pencil className="size-4 2xl:size-5" />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                            <p className="text-sm font-light text-accent">Edit in Image Editor</p>
+                            <p className="text-sm 2xl:text-base font-light text-accent">Edit in Image Editor</p>
                         </TooltipContent>
                     </Tooltip>
                 )}
                 <Tooltip>
                     <TooltipTrigger>
                         <Button variant={'secondary'} className={'group p-2.5! h-full!'} disabled={isConverting} onClick={handleConvertSingle}>
-                            <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5 size-5" />
+                            <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5 size-5 2xl:size-6" />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p className="text-sm font-light text-accent">Convert Single</p>
+                        <p className="text-sm 2xl:text-base font-light text-accent">Convert Single</p>
                     </TooltipContent>
                 </Tooltip>
                 <Tooltip>
@@ -137,15 +137,15 @@ export default function File({ data }: { data: File }) {
                         <Button
                             variant={failedError ? 'destructive' : 'ghost'}
                             size="icon"
-                            className="shrink-0"
+                            className="shrink-0 2xl:size-10"
                             disabled={isConverting}
                             onClick={() => removeFile(data)}
                         >
-                            <X className="size-4" />
+                            <X className="size-4 2xl:size-5" />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p className="text-sm font-light text-accent">Remove</p>
+                        <p className="text-sm 2xl:text-base font-light text-accent">Remove</p>
                     </TooltipContent>
                 </Tooltip>
             </div>

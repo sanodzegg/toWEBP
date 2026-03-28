@@ -27,48 +27,48 @@ export default function ConversionStats({
     totalInputSize,
 }: ConversionStatsProps) {
     return (
-        <div className="mt-6 p-4 rounded-2xl border border-accent bg-secondary/30 space-y-3">
-            <div className="flex items-center justify-between text-sm">
+        <div className="mt-6 2xl:mt-8 p-4 2xl:p-5 rounded-2xl border border-accent bg-secondary/30 space-y-3 2xl:space-y-4">
+            <div className="flex items-center justify-between text-sm 2xl:text-base">
                 <span className="text-accent-foreground/70 truncate max-w-xs cursor-default">
                     {isDone ? 'Done' : 'Converting…'}
                 </span>
                 <span className="text-accent-foreground font-medium ml-4 shrink-0">{Math.round(progress)}%</span>
             </div>
-            <div className="h-2 w-full rounded-full bg-accent overflow-hidden">
+            <div className="h-2 2xl:h-2.5 w-full rounded-full bg-accent overflow-hidden">
                 <div
                     className="h-full rounded-full transition-all duration-300"
                     style={{ width: `${progress}%`, background: 'linear-gradient(to right, #7c3aed, #a855f7)' }}
                 />
             </div>
-            <div className="grid grid-cols-3 gap-3 pt-1">
-                <div className="rounded-xl border border-accent bg-background p-3">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Converted</p>
-                    <p className="text-2xl font-bold text-foreground">{convertedCount}</p>
-                    <p className="text-xs text-muted-foreground">of {convertingTotal} files</p>
+            <div className="grid grid-cols-3 gap-3 2xl:gap-4 pt-1">
+                <div className="rounded-xl border border-accent bg-background p-3 2xl:p-4">
+                    <p className="text-xs 2xl:text-sm text-muted-foreground uppercase tracking-wider mb-1">Converted</p>
+                    <p className="text-2xl 2xl:text-3xl font-bold text-foreground">{convertedCount}</p>
+                    <p className="text-xs 2xl:text-sm text-muted-foreground">of {convertingTotal} files</p>
                 </div>
-                <div className="rounded-xl border border-accent bg-background p-3">
+                <div className="rounded-xl border border-accent bg-background p-3 2xl:p-4">
                     <div className="flex items-center gap-1 mb-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Saved</p>
+                        <p className="text-xs 2xl:text-sm text-muted-foreground uppercase tracking-wider">Saved</p>
                         {hasSuspiciousSavings && (
                             <Tooltip>
                                 <TooltipTrigger className="cursor-help">
-                                    <HelpCircle className="size-3 text-muted-foreground shrink-0" />
+                                    <HelpCircle className="size-3 2xl:size-3.5 text-muted-foreground shrink-0" />
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-64 text-center">
-                                    <p>{suspiciousReason}</p>
+                                    <p className="text-sm 2xl:text-base">{suspiciousReason}</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}
                     </div>
-                    <p className={`text-2xl font-bold ${savedPercent !== null && savedPercent < 0 ? 'text-destructive' : 'text-foreground'}`}>
+                    <p className={`text-2xl 2xl:text-3xl font-bold ${savedPercent !== null && savedPercent < 0 ? 'text-destructive' : 'text-foreground'}`}>
                         {savedPercent !== null ? `${savedPercent}%` : '—'}
                     </p>
-                    <p className="text-xs text-muted-foreground">file size reduction</p>
+                    <p className="text-xs 2xl:text-sm text-muted-foreground">file size reduction</p>
                 </div>
-                <div className="rounded-xl border border-accent bg-background p-3">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Output</p>
-                    <p className="text-2xl font-bold text-foreground">{totalOutputSize > 0 ? formatBytes(totalOutputSize) : '—'}</p>
-                    <p className="text-xs text-muted-foreground">from {formatBytes(totalInputSize)}</p>
+                <div className="rounded-xl border border-accent bg-background p-3 2xl:p-4">
+                    <p className="text-xs 2xl:text-sm text-muted-foreground uppercase tracking-wider mb-1">Output</p>
+                    <p className="text-2xl 2xl:text-3xl font-bold text-foreground">{totalOutputSize > 0 ? formatBytes(totalOutputSize) : '—'}</p>
+                    <p className="text-xs 2xl:text-sm text-muted-foreground">from {formatBytes(totalInputSize)}</p>
                 </div>
             </div>
         </div>
