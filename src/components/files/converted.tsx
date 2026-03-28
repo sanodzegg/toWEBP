@@ -88,10 +88,10 @@ export default function ConvertedFiles() {
                             <Button onClick={resetAppState} variant={'secondary'} className={'group p-2.5! h-full!'}>
                                 <RefreshCcw className="size-5 group-hover:animate-spin-once" />
                             </Button>
-                            <TooltipContent>
-                                <p className="text-sm font-light text-accent">Refresh Converting</p>
-                            </TooltipContent>
                         </TooltipTrigger>
+                        <TooltipContent>
+                            <p className="text-sm font-light text-accent">Refresh Converting</p>
+                        </TooltipContent>
                     </Tooltip>
                 </div>
             </div>

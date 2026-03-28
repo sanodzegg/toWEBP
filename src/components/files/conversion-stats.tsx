@@ -29,13 +29,9 @@ export default function ConversionStats({
     return (
         <div className="mt-6 p-4 rounded-2xl border border-accent bg-secondary/30 space-y-3">
             <div className="flex items-center justify-between text-sm">
-                <Tooltip>
-                    <TooltipTrigger>
-                        <span className="text-accent-foreground/70 truncate max-w-xs cursor-default">
-                            {isDone ? 'Done' : 'Converting…'}
-                        </span>
-                    </TooltipTrigger>
-                </Tooltip>
+                <span className="text-accent-foreground/70 truncate max-w-xs cursor-default">
+                    {isDone ? 'Done' : 'Converting…'}
+                </span>
                 <span className="text-accent-foreground font-medium ml-4 shrink-0">{Math.round(progress)}%</span>
             </div>
             <div className="h-2 w-full rounded-full bg-accent overflow-hidden">
@@ -64,7 +60,9 @@ export default function ConversionStats({
                             </Tooltip>
                         )}
                     </div>
-                    <p className="text-2xl font-bold text-foreground">{savedPercent !== null && savedPercent > 0 ? `${savedPercent}%` : '—'}</p>
+                    <p className={`text-2xl font-bold ${savedPercent !== null && savedPercent < 0 ? 'text-destructive' : 'text-foreground'}`}>
+                        {savedPercent !== null ? `${savedPercent}%` : '—'}
+                    </p>
                     <p className="text-xs text-muted-foreground">file size reduction</p>
                 </div>
                 <div className="rounded-xl border border-accent bg-background p-3">

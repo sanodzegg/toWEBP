@@ -1,6 +1,6 @@
 import { Import } from "lucide-react";
 import { Button } from "../ui/button";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useConvertStore } from "@/store/useConvertStore";
 import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,10 @@ export default function Dropbox() {
     const { receiveFiles, files: existingFiles } = useConvertStore();
     const [skipMessage, setSkipMessage] = useState<string | null>(null)
     const skipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    useEffect(() => {
+        return () => { if (skipTimerRef.current) clearTimeout(skipTimerRef.current) }
+    }, [])
 
     const handleFiles = (incoming: FileList | null) => {
         if (!incoming) return

@@ -89,7 +89,7 @@ export default function File({ data }: { data: File }) {
             </div>
             <div className="flex items-center gap-2 shrink-0 justify-end min-w-70.5">
                 <Combobox value={targetFormat} onValueChange={(v) => !isConverting && setTargetFormat(data, v ?? convertTo[0])} items={convertTo}>
-                    <ComboboxInput className={'w-24! h-10! [&_input]:uppercase! [&_input]:select-none!'} readOnly />
+                    <ComboboxInput className={`w-24! h-10! [&_input]:uppercase! [&_input]:select-none! ${isConverting ? 'opacity-50 pointer-events-none' : ''}`} readOnly />
                     <ComboboxContent>
                         <ComboboxList>
                             {(item) => (
@@ -102,7 +102,9 @@ export default function File({ data }: { data: File }) {
                 </Combobox>
                 <Tooltip>
                     <TooltipTrigger>
-                        <FileSettingsDialog file={data} />
+                        <span className={isConverting ? 'pointer-events-none opacity-50' : ''}>
+                            <FileSettingsDialog file={data} />
+                        </span>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p className="text-sm font-light text-accent">File Settings</p>
@@ -111,7 +113,7 @@ export default function File({ data }: { data: File }) {
                 {isImage && (
                     <Tooltip>
                         <TooltipTrigger>
-                            <Button variant={'secondary'} className={'group p-2.5! h-full!'} onClick={handleEditInEditor}>
+                            <Button variant={'secondary'} className={'group p-2.5! h-full!'} disabled={isConverting} onClick={handleEditInEditor}>
                                 <Pencil className="size-4" />
                             </Button>
                         </TooltipTrigger>
@@ -122,7 +124,7 @@ export default function File({ data }: { data: File }) {
                 )}
                 <Tooltip>
                     <TooltipTrigger>
-                        <Button variant={'secondary'} className={'group p-2.5! h-full!'} onClick={handleConvertSingle}>
+                        <Button variant={'secondary'} className={'group p-2.5! h-full!'} disabled={isConverting} onClick={handleConvertSingle}>
                             <ArrowRightIcon className="transition-transform group-hover:translate-x-0.5 size-5" />
                         </Button>
                     </TooltipTrigger>

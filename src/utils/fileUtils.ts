@@ -11,6 +11,6 @@ export function getExtension(f: File): string {
 export function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'
   return bytes < 1024 * 1024
-    ? (bytes / 1024).toFixed(1) + 'KB'
-    : (bytes / 1024 / 1024).toFixed(1) + 'MB'
+    ? (bytes / 1024).toFixed(1) + ' KB'
+    : (bytes / 1024 / 1024).toFixed(1) + ' MB'
 }

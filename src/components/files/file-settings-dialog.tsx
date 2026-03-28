@@ -47,12 +47,19 @@ export default function FileSettingsDialog({ file }: { file: File }) {
         setQuality(fileSettings?.quality ?? imageQuality)
     }
 
+    const parseDimension = (v: string): number | undefined => {
+        const n = Math.floor(Number(v))
+        return v && n >= 1 ? n : undefined
+    }
+
     const handleSave = () => {
+        const w = parseDimension(width)
+        const h = parseDimension(height)
         setFileSettings(file, {
             ...(isImage || isVideo ? {
-                width: width ? parseInt(width) : undefined,
-                height: height ? parseInt(height) : undefined,
-                fit: (width || height) ? fit : undefined,
+                width: w,
+                height: h,
+                fit: (w || h) ? fit : undefined,
             } : {}),
             ...(isImage ? {
                 keepMetadata: keepMetadata !== true ? keepMetadata : undefined,
