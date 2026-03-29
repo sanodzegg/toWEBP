@@ -4,11 +4,13 @@ import type {
   ConversionSliceActions,
   FileSliceState,
   SettingsSliceState,
+  SettingsSliceActions,
 } from '@/types'
 import { fileKey, getExtension } from '@/utils/fileUtils'
 import { getEngineForFile } from '@/engines/engineRegistry'
+import { ratioKey, computeUpdatedSamples } from '@/utils/estimateSize'
 
-type FullStore = FileSliceState & ConversionSliceState & ConversionSliceActions & SettingsSliceState
+type FullStore = FileSliceState & ConversionSliceState & ConversionSliceActions & SettingsSliceState & SettingsSliceActions
 
 export const createConversionSlice: StateCreator<
   FullStore,
@@ -53,14 +55,29 @@ export const createConversionSlice: StateCreator<
       settings?.quality !== undefined ||
       settings?.keepMetadata === false
     )
-    set((state) => ({
-      convertedFiles: {
-        ...state.convertedFiles,
-        [fileKey(file)]: { name, format, sourceFormat, engineId, inputSize: file.size, blob, customized },
-      },
-      convertedCount: state.convertedCount + 1,
-      totalOutputSize: state.totalOutputSize + blob.size,
-    }))
+
+    // Record actual ratio for future estimates (skip SVG source — file size has no correlation to raster output)
+    const shouldLearn = sourceFormat && format && sourceFormat !== 'svg'
+    const learnKey = shouldLearn ? ratioKey(sourceFormat, format) : null
+    const learnQuality = engineId === 'image' ? (settings?.quality ?? get().imageQuality) : 80
+
+    set((state) => {
+      let ratiosPatch: Partial<FullStore> = {}
+      if (learnKey) {
+        const existing = (state as unknown as FullStore).conversionRatios?.[learnKey] ?? []
+        const updated = computeUpdatedSamples(existing, file.size, blob.size, learnQuality)
+        ratiosPatch = { conversionRatios: { ...(state as unknown as FullStore).conversionRatios, [learnKey]: updated } }
+      }
+      return {
+        ...ratiosPatch,
+        convertedFiles: {
+          ...state.convertedFiles,
+          [fileKey(file)]: { name, format, sourceFormat, engineId, inputSize: file.size, blob, customized },
+        },
+        convertedCount: state.convertedCount + 1,
+        totalOutputSize: state.totalOutputSize + blob.size,
+      }
+    })
   },
 
   setFailedFile: (file, error) =>

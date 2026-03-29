@@ -66,6 +66,7 @@ export interface SettingsSliceState {
   defaultVideoFormat: string
   defaultOutputFolder: string | null
   pendingEditorFile: File | null
+  conversionRatios: Record<string, number[]>
 }
 
 export interface SettingsSliceActions {
@@ -76,4 +77,5 @@ export interface SettingsSliceActions {
   setDefaultVideoFormat: (format: string) => void
   setDefaultOutputFolder: (folder: string | null) => void
   setPendingEditorFile: (file: File | null) => void
+  updateConversionRatio: (key: string, samples: number[]) => void
 }

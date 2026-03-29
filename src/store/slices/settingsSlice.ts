@@ -28,6 +28,7 @@ export const createSettingsSlice: StateCreator<
   defaultVideoFormat: 'mp4',
   defaultOutputFolder: null,
   pendingEditorFile: null,
+  conversionRatios: {},
   setQuality: (quality) => set({ quality }),
   setImageQuality: (imageQuality) => set({ imageQuality }),
   setDefaultImageFormat: (defaultImageFormat) => set({ defaultImageFormat }),
@@ -35,4 +36,7 @@ export const createSettingsSlice: StateCreator<
   setDefaultVideoFormat: (defaultVideoFormat) => set({ defaultVideoFormat }),
   setDefaultOutputFolder: (defaultOutputFolder) => set({ defaultOutputFolder }),
   setPendingEditorFile: (pendingEditorFile) => set({ pendingEditorFile }),
+  updateConversionRatio: (key, samples) => set((state) => ({
+    conversionRatios: { ...state.conversionRatios, [key]: samples },
+  })),
 })

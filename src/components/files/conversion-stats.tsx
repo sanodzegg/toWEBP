@@ -61,9 +61,9 @@ export default function ConversionStats({
                         )}
                     </div>
                     <p className={`text-2xl 2xl:text-3xl font-bold ${savedPercent !== null && savedPercent < 0 ? 'text-destructive' : 'text-foreground'}`}>
-                        {savedPercent !== null ? `${savedPercent}%` : '—'}
+                        {savedPercent !== null ? (savedPercent < 0 ? `+${-savedPercent}%` : `${savedPercent}%`) : '—'}
                     </p>
-                    <p className="text-xs 2xl:text-sm text-muted-foreground">file size reduction</p>
+                    <p className="text-xs 2xl:text-sm text-muted-foreground">{savedPercent !== null && savedPercent < 0 ? 'size increase' : 'file size reduction'}</p>
                 </div>
                 <div className="rounded-xl border border-accent bg-background p-3 2xl:p-4">
                     <p className="text-xs 2xl:text-sm text-muted-foreground uppercase tracking-wider mb-1">Output</p>

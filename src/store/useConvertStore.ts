@@ -35,6 +35,7 @@ export const useConvertStore = create<ConvertStore>()(
         defaultDocumentFormat: state.defaultDocumentFormat,
         defaultVideoFormat: state.defaultVideoFormat,
         defaultOutputFolder: state.defaultOutputFolder,
+        conversionRatios: state.conversionRatios,
         // pendingEditorFile intentionally excluded — File objects can't be serialized
       }),
     }

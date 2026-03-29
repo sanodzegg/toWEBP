@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import type { ConvertedFile } from "@/types"
 import { Button } from "../ui/button"
 import { Download, Loader2, RefreshCcw } from "lucide-react"
+import { formatBytes } from "@/utils/fileUtils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import ConversionStats from "./conversion-stats"
 
@@ -29,17 +30,14 @@ export default function ConvertedFiles() {
     const isDone = convertingTotal > 0 && doneCount >= convertingTotal
     const progress = convertingTotal > 0 ? (doneCount / convertingTotal) * 100 : 0
     const quality = useConvertStore(s => s.quality)
-    const imageFiles = snapshot.filter(f => f.engineId === 'image')
-    const imageInputSize = imageFiles.reduce((acc, f) => acc + f.inputSize, 0)
-    const imageOutputSize = imageFiles.reduce((acc, f) => acc + f.blob.size, 0)
-    const savedPercent = isDone && imageFiles.length > 0 && imageInputSize > 0
-        ? Math.round((1 - imageOutputSize / imageInputSize) * 100)
+    const savedPercent = isDone && snapshot.length > 0 && totalInputSize > 0
+        ? Math.round((1 - totalOutputSize / totalInputSize) * 100)
         : null
-    const hasSameFormatReencode = quality >= 70 && imageFiles.some(f => f.sourceFormat === f.format)
+    const hasSameFormatReencode = snapshot.some(f => f.sourceFormat === f.format)
     const hasHighSavingsAtHighQuality = quality >= 80 && savedPercent !== null && savedPercent > 50
     const hasSuspiciousSavings = savedPercent !== null && (hasSameFormatReencode || hasHighSavingsAtHighQuality)
     const suspiciousReason = hasSameFormatReencode
-        ? 'Some files were re-encoded to the same format. Savings come from metadata removal and compression re-optimization, not quality loss.'
+        ? 'Some files were re-encoded to the same format. Any size change comes from metadata removal or compression re-optimization.'
         : 'Savings above 50% at high quality are unusual. This likely means the originals had heavy metadata or inefficient encoding — not quality loss.'
 
     if (convertingTotal === 0) return null
@@ -103,6 +101,7 @@ export default function ConvertedFiles() {
                                 <Tooltip>
                                     <TooltipTrigger className="flex-1 min-w-0 text-left">
                                         <span className="text-sm 2xl:text-base text-accent-foreground font-body truncate cursor-default block w-full">{f.name}</span>
+                                        <span className="text-xs 2xl:text-sm text-accent-foreground/50 font-body">{formatBytes(f.blob.size)}</span>
                                     </TooltipTrigger>
                                     <TooltipContent><p className="text-sm 2xl:text-base">{f.name}</p></TooltipContent>
                                 </Tooltip>

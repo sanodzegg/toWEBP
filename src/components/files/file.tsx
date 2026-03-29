@@ -10,7 +10,7 @@ import { ArrowRightIcon, Loader2, MoveRight, Pencil, X } from "lucide-react"
 import { useConvertStore } from "@/store/useConvertStore"
 import { fileKey, getExtension, formatBytes } from "@/utils/fileUtils"
 import { getFormatsForFile, getEngineForFile } from "@/engines/engineRegistry"
-import { estimateOutputSize } from "@/utils/estimateSize"
+import { estimateOutputSize, isLearnedEstimate } from "@/utils/estimateSize"
 import { Button } from "../ui/button"
 import FileSettingsDialog from "./file-settings-dialog"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
@@ -39,7 +39,7 @@ export default function File({ data }: { data: File }) {
     const removeFile = useConvertStore(s => s.removeFile)
     const setPendingEditorFile = useConvertStore(s => s.setPendingEditorFile)
     const convertingFiles = useConvertStore(s => s.convertingFiles)
-    const { quality, imageQuality, fileSettings, convertedFiles, convertingFiles: convertingFilesMap, startConversion, setConvertedFile, setFailedFile, markFileConverting, unmarkFileConverting } = useConvertStore()
+    const { quality, imageQuality, fileSettings, convertedFiles, convertingFiles: convertingFilesMap, startConversion, setConvertedFile, setFailedFile, markFileConverting, unmarkFileConverting, conversionRatios } = useConvertStore()
     const { onConversionSuccess, onBatchComplete } = useConversionCountContext()
     const navigate = useNavigate()
 
@@ -49,7 +49,9 @@ export default function File({ data }: { data: File }) {
     const engineId = getEngineForFile(data)?.id
     const isConverting = convertingFiles.has(fileKey(data))
     const effectiveQuality = perFileQuality ?? (engineId === 'image' ? imageQuality : quality)
-    const estimatedSize = isImage && targetFormat ? estimateOutputSize(data.size, ext, targetFormat, effectiveQuality) : null
+    const estimateQuality = engineId === 'image' ? effectiveQuality : 80
+    const estimatedSize = targetFormat && ext ? estimateOutputSize(data.size, ext, targetFormat, estimateQuality, conversionRatios) : null
+    const learned = ext && targetFormat ? isLearnedEstimate(ext, targetFormat, conversionRatios) : false
 
     const handleConvertSingle = () => convertSingle(data, {
         quality, imageQuality, fileSettings, convertedFiles, convertingFiles: convertingFilesMap, startConversion, setConvertedFile, setFailedFile, markFileConverting, unmarkFileConverting, removeFile, onConversionSuccess, onBatchComplete,
@@ -74,9 +76,14 @@ export default function File({ data }: { data: File }) {
                     : <p className="text-xs 2xl:text-sm font-normal text-accent-foreground/50">
                         {formatBytes(data.size)}
                         {estimatedSize !== null && (
-                            <span className="ml-1.5">
-                                → <span className={estimatedSize < data.size ? 'text-green-500' : 'text-yellow-500'}>~{formatBytes(estimatedSize)}</span>
-                            </span>
+                            <Tooltip>
+                                <TooltipTrigger className="ml-1.5 cursor-default">
+                                    → <span className={estimatedSize < data.size ? 'text-green-500' : 'text-yellow-500'}>~{formatBytes(estimatedSize)}</span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p className="text-sm">{learned ? 'Estimated from your previous conversions' : 'Rough estimate — improves as you convert'}</p>
+                                </TooltipContent>
+                            </Tooltip>
                         )}
                     </p>
                 }

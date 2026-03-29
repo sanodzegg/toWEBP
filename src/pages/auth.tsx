@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/useAuth'
 import { getLocalCounts } from '@/lib/useConversionCount'
@@ -13,7 +12,6 @@ type Mode = 'login' | 'signup'
 
 export default function Auth() {
     const { user, plan, loading } = useAuth()
-    const navigate = useNavigate()
     const [mode, setMode] = useState<Mode>('login')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -30,7 +28,6 @@ export default function Auth() {
         if (mode === 'login') {
             const { error } = await supabase.auth.signInWithPassword({ email, password })
             if (error) setError(error.message)
-            else navigate('/')
         } else {
             const { error } = await supabase.auth.signUp({ email, password })
             if (error) setError(error.message)
